@@ -1,3 +1,31 @@
 [
-    
+    {
+        "id": 1,
+        "name": "Eshmat Eshmatov"
+    },
+
+    {
+        "id": 2,
+        "name": "Toshmat Toshmatov"
+    },
+
+    {
+        "id": 3,
+        "name": "John Doe"
+    },
+
+    {
+        "id": 4,
+        "name": "Ahmediv Avaz"
+    },
+
+    {
+        "id": 5,
+        "name": "Kimsan Kimsanov"
+    },
+
+    {
+        "id": 6,
+        "name": "O'tirdiyev Turdi"
+    }
 ]
