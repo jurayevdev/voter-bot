@@ -15,7 +15,7 @@ bot.onText(/start/, msg => {
             bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz 😀</b>", {
                 parse_mode: 'HTML',
             })
-            bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz ?</b>", {
+            bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nSaylanuvchilar ro'yhati 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: [
@@ -49,7 +49,7 @@ bot.onText(/start/, msg => {
                                 callback_data: 6
                             }
                         ],
-                    ]
+                    ],
                 }
             })
         }
@@ -58,8 +58,7 @@ bot.onText(/start/, msg => {
             bot.sendMessage(msg.chat.id, "<b>Еще раз привет и добро пожаловать в наш бот 😀</b>", {
                 parse_mode: 'HTML',
             })
-
-            bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz ?</b>", {
+            bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок выборщиков 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: [
@@ -93,15 +92,16 @@ bot.onText(/start/, msg => {
                                 callback_data: 6
                             }
                         ],
-                    ]
+                    ],
                 }
             })
         }
+
         else if (foundedUser.language == "eng") {
             bot.sendMessage(msg.chat.id, "<b>Hello again and welcome to our bot 😀</b>", {
                 parse_mode: 'HTML',
             })
-            bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz ?</b>", {
+            bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of voters 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: [
@@ -135,12 +135,12 @@ bot.onText(/start/, msg => {
                                 callback_data: 6
                             }
                         ],
-                    ]
+                    ],
                 }
             })
         }
-        
     }
+
     else {
         bot.sendMessage(msg.chat.id, "<b>Hello and welcome to our bot 😀</b>\n\n<i>Select the language..👇🏻</i>", {
             parse_mode: 'HTML',
@@ -167,10 +167,12 @@ bot.onText(/start/, msg => {
 
     bot.on("callback_query", msg => {
         let langu = "eng";
+        let writeUser = users.find(s => s.id == msg.from.id);
+        let searchSay = saylanuvchi.find(s => s.id == Number(msg.data));
+        console.log(msg);
         if (msg.data == 'uzb') {
             langu = "uzb"
-            // bot.deleteMessage(msg.message.chat.id, msg.message.message_id)
-            bot.sendMessage(msg.message.chat.id, "<b>Kimga ovoz bermoqchisiz ?</b>", {
+            bot.sendMessage(msg.message.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nSaylanuvchilar ro'yhati 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: [
@@ -207,98 +209,63 @@ bot.onText(/start/, msg => {
                     ],
                 }
             })
-
         }
 
         else if (msg.data == 'rus') {
             langu = "rus"
-            bot.sendMessage(msg.message.chat.id, "<b>Kimga ovoz bermoqchisiz ?</b>", {
+            bot.sendMessage(msg.message.chat.id, "<b>Отправьте команду /vote, чтобы проголосовать!</b>", {
                 parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: "Eshmat Eshmatov",
-                                callback_data: 1
-                            },
-                            {
-                                text: "Toshmat Toshmatov",
-                                callback_data: 2
-                            },
-                        ],
-                        [
-                            {
-                                text: "John Doe",
-                                callback_data: 3
-                            },
-                            {
-                                text: "Ahmediv Avaz",
-                                callback_data: 4
-                            },
-                        ],
-                        [
-                            {
-                                text: "Kimsan Kimsanov",
-                                callback_data: 5
-                            },
-                            {
-                                text: "O'tirdiyev Turdi",
-                                callback_data: 6
-                            }
-                        ],
-                    ]
-                }
             })
         }
 
         else if (msg.data == 'eng') {
             langu = "eng"
-            bot.sendMessage(msg.message.chat.id, "<b>Kimga ovoz bermoqchisiz ?</b>", {
+            bot.sendMessage(msg.message.chat.id, "<b>Submit the /vote command to vote!</b>", {
                 parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: "Eshmat Eshmatov",
-                                callback_data: 1
-                            },
-                            {
-                                text: "Toshmat Toshmatov",
-                                callback_data: 2
-                            },
-                        ],
-                        [
-                            {
-                                text: "John Doe",
-                                callback_data: 3
-                            },
-                            {
-                                text: "Ahmediv Avaz",
-                                callback_data: 4
-                            },
-                        ],
-                        [
-                            {
-                                text: "Kimsan Kimsanov",
-                                callback_data: 5
-                            },
-                            {
-                                text: "O'tirdiyev Turdi",
-                                callback_data: 6
-                            }
-                        ],
-                    ]
-                }
             })
+        }
+
+        else if (searchSay) {
+            if (writeUser.language == "uzb") {
+                bot.sendMessage(msg.message.chat.id, "Ovoz berish uchun telefon raqmingizni kiriting..!", {
+                    reply_markup: {
+                        keyboard: [[{
+                            text: "My phone number",
+                            request_contact: true
+                        }]],
+                        resize_keyboard: true,
+                    }
+                })
+            }
+
+            else if (writeUser.language == "rus") {
+                bot.sendMessage(msg.message.chat.id, "Введите свой номер телефона, чтобы проголосовать..!", {
+                    reply_markup: {
+                        keyboard: [[{
+                            text: "My phone number",
+                            request_contact: true
+                        }]],
+                        resize_keyboard: true,
+                    }
+                })
+            }
+
+            else if (writeUser.language == "eng") {
+                bot.sendMessage(msg.message.chat.id, "Enter your phone number to vote..!", {
+                    reply_markup: {
+                        keyboard: [[{
+                            text: "My phone number",
+                            request_contact: true
+                        }]],
+                        resize_keyboard: true,
+                    }
+                })
+            }
         }
 
         try {
             let user = {}
-            if (foundedUser) {
-                console.log("Bu user ro'yxatdan o'tgan!");
-                return;
-            }
-            else {
+            if (!writeUser) {
                 console.log("else");
                 user = {
                     id: msg.from.id,
@@ -306,68 +273,109 @@ bot.onText(/start/, msg => {
                     username: msg.from.username,
                     language: `${langu}`
                 }
-                console.log(msg);
                 users.push(user);
+                write_file("users", users);
             }
-            console.log(users);
-            write_file("users", users);
         }
         catch { err } {
             console.error(err)
         }
     })
 
-    bot.on("callback_query", msg => {
-        console.log("Mana");
-        let searchSay = saylanuvchi.find(s => s.id == Number(msg.data));
-        if (searchSay) {
-            bot.sendMessage(msg.message.chat.id, "Ovoz berish uchun telefon raqmingizni kiriting..!", {
-                reply_markup: {
-                    keyboard: [[{
-                        text: "My phone number",
-                        request_contact: true
-                    }]],
-                    resize_keyboard: true,
-                }
-            })
-        } else {
-            bot.sendMessage(msg.message.chat.id, "Bunday saylanuvchi yoq!")
-        }
-    })
-
     bot.on("contact", (msg) => {
-        console.log("Contact");
-        // let isSubscribes = ["administrator", "member", "owner"].includes(chatMember.status)
-        bot.sendMessage(msg.chat.id, "Raxmat", {
-            reply_markup: {
-                remove_keyboard: true,
+        let contactUser = users.find(s => s.id == msg.from.id);
+        if (msg.chat.id == msg.contact.user_id) {
+            if (contactUser.language == "uzb") {
+                bot.sendMessage(msg.chat.id, "Raxmat!", {
+                    reply_markup: { remove_keyboard: true }
+                })
+                bot.sendMessage(msg.chat.id, "Ovoz berish uchun iltimos kanalga azo bo'ling!", {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                {
+                                    text: "DEVOSOFT",
+                                    url: "https://t.me/devosoftuz"
+                                }
+                            ],
+                            [
+                                {
+                                    text: "Obuna bo'ldim",
+                                    callback_data: "ok"
+                                }
+                            ]
+                        ],
+                    }
+                })
             }
-        })
-        bot.sendMessage(msg.chat.id, "Ovoz berish uchun kanalga azo bo'ling", {
-            reply_markup: {
-                inline_keyboard: [
-                    [
-                        {
-                            text: "Kanalga",
-                            url: "https://t.me/devosoftuz"
-                        }
-                    ],
-                    [
-                        {
-                            text: "Obuna bo'ldim",
-                            callback_data: "ok"
-                        }
-                    ]
-                ]
+
+            else if (contactUser.language == "rus") {
+                bot.sendMessage(msg.chat.id, "Подпишитесь на канал, чтобы проголосовать!", {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                {
+                                    text: "DEVOSOFT",
+                                    url: "https://t.me/devosoftuz"
+                                }
+                            ],
+                            [
+                                {
+                                    text: "Obuna bo'ldim",
+                                    callback_data: "ok"
+                                }
+                            ]
+                        ],
+                    }
+                })
             }
-        })
-        let phoneNumber = users.find(s => s.id == msg.chat.id);
-        if (phoneNumber) {
-            for (let i in users) {
-                if (users[i].id == msg.chat.id && !users[i].phone_number) {
-                    users[i].phone_number = msg.reply_to_message.contact.phone_number;
+
+            else if (contactUser.language == "eng") {
+                bot.sendMessage(msg.chat.id, "Subscribe to the channel to vote!", {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                {
+                                    text: "DEVOSOFT",
+                                    url: "https://t.me/devosoftuz"
+                                }
+                            ],
+                            [
+                                {
+                                    text: "Obuna bo'ldim",
+                                    callback_data: "ok"
+                                }
+                            ]
+                        ],
+                    }
+                })
+            }
+
+            try {
+                if (contactUser) {
+                    for (let i in users) {
+                        if (users[i].id == msg.chat.id) {
+                            users[i].phone_number = msg.contact.phone_number;
+                        }
+                    }
                     write_file('users', users);
                 }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        else {
+            if (contactUser.language == "uzb") {
+                bot.sendMessage(msg.chat.id, "Iltimos o'zingizni telefon raqamingizni yuboring!")
+            }
+
+            else if (contactUser.language == "rus") {
+                bot.sendMessage(msg.chat.id, "Пожалуйста, пришлите свой номер телефона!")
+            }
+
+            else if (contactUser.language == "uzb") {
+                bot.sendMessage(msg.chat.id, "Please send yourself your phone number!")
             }
         }
     })
