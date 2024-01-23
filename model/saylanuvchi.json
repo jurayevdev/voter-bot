@@ -1,31 +1,29 @@
 [
     {
         "id": 1,
-        "name": "Eshmat Eshmatov"
+        "name": "Eshmat Eshmatov",
+        "ovoz": 2
     },
-
     {
         "id": 2,
         "name": "Toshmat Toshmatov"
     },
-
     {
         "id": 3,
         "name": "John Doe"
     },
-
     {
         "id": 4,
-        "name": "Ahmediv Avaz"
+        "name": "Ahmediv Avaz",
+        "ovoz": 3
     },
-
     {
         "id": 5,
         "name": "Kimsan Kimsanov"
     },
-
     {
         "id": 6,
-        "name": "O'tirdiyev Turdi"
+        "name": "O'tirdiyev Turdi",
+        "ovoz": 1
     }
 ]
