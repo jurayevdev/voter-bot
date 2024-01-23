@@ -172,6 +172,7 @@ bot.onText(/start/, msg => {
         console.log(msg);
         if (msg.data == 'uzb') {
             langu = "uzb"
+            bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
             bot.sendMessage(msg.message.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nSaylanuvchilar ro'yhati 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
@@ -213,20 +214,91 @@ bot.onText(/start/, msg => {
 
         else if (msg.data == 'rus') {
             langu = "rus"
-            bot.sendMessage(msg.message.chat.id, "<b>Отправьте команду /vote, чтобы проголосовать!</b>", {
+            bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
+            bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок выборщиков 👇🏻</b>", {
                 parse_mode: 'HTML',
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "Eshmat Eshmatov",
+                                callback_data: 1
+                            },
+                            {
+                                text: "Toshmat Toshmatov",
+                                callback_data: 2
+                            },
+                        ],
+                        [
+                            {
+                                text: "John Doe",
+                                callback_data: 3
+                            },
+                            {
+                                text: "Ahmediv Avaz",
+                                callback_data: 4
+                            },
+                        ],
+                        [
+                            {
+                                text: "Kimsan Kimsanov",
+                                callback_data: 5
+                            },
+                            {
+                                text: "O'tirdiyev Turdi",
+                                callback_data: 6
+                            }
+                        ],
+                    ],
+                }
             })
         }
 
         else if (msg.data == 'eng') {
             langu = "eng"
-            bot.sendMessage(msg.message.chat.id, "<b>Submit the /vote command to vote!</b>", {
+            bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
+            bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of voters 👇🏻</b>", {
                 parse_mode: 'HTML',
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "Eshmat Eshmatov",
+                                callback_data: 1
+                            },
+                            {
+                                text: "Toshmat Toshmatov",
+                                callback_data: 2
+                            },
+                        ],
+                        [
+                            {
+                                text: "John Doe",
+                                callback_data: 3
+                            },
+                            {
+                                text: "Ahmediv Avaz",
+                                callback_data: 4
+                            },
+                        ],
+                        [
+                            {
+                                text: "Kimsan Kimsanov",
+                                callback_data: 5
+                            },
+                            {
+                                text: "O'tirdiyev Turdi",
+                                callback_data: 6
+                            }
+                        ],
+                    ],
+                }
             })
         }
 
         else if (searchSay) {
             if (writeUser.language == "uzb") {
+                bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
                 bot.sendMessage(msg.message.chat.id, "Ovoz berish uchun telefon raqmingizni kiriting..!", {
                     reply_markup: {
                         keyboard: [[{
@@ -239,6 +311,7 @@ bot.onText(/start/, msg => {
             }
 
             else if (writeUser.language == "rus") {
+                bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
                 bot.sendMessage(msg.message.chat.id, "Введите свой номер телефона, чтобы проголосовать..!", {
                     reply_markup: {
                         keyboard: [[{
@@ -251,6 +324,7 @@ bot.onText(/start/, msg => {
             }
 
             else if (writeUser.language == "eng") {
+                bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
                 bot.sendMessage(msg.message.chat.id, "Enter your phone number to vote..!", {
                     reply_markup: {
                         keyboard: [[{
@@ -282,101 +356,197 @@ bot.onText(/start/, msg => {
         }
     })
 
-    bot.on("contact", (msg) => {
-        let contactUser = users.find(s => s.id == msg.from.id);
-        if (msg.chat.id == msg.contact.user_id) {
-            if (contactUser.language == "uzb") {
-                bot.sendMessage(msg.chat.id, "Raxmat!", {
-                    reply_markup: { remove_keyboard: true }
-                })
-                bot.sendMessage(msg.chat.id, "Ovoz berish uchun iltimos kanalga azo bo'ling!", {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [
-                                {
-                                    text: "DEVOSOFT",
-                                    url: "https://t.me/devosoftuz"
-                                }
-                            ],
-                            [
-                                {
-                                    text: "Obuna bo'ldim",
-                                    callback_data: "ok"
-                                }
-                            ]
-                        ],
-                    }
-                })
-            }
+    // bot.on("contact", (msg) => {
+    //     let contactUser = users.find(s => s.id == msg.from.id);
+    //     if (msg.chat.id == msg.contact.user_id) {
+    //         if (contactUser.language == "uzb") {
+    //             bot.sendMessage(msg.chat.id, "Raxmat!", {
+    //                 reply_markup: { remove_keyboard: true }
+    //             })
+    //             bot.sendMessage(msg.chat.id, "Ovoz berish uchun iltimos kanalga azo bo'ling!", {
+    //                 reply_markup: {
+    //                     inline_keyboard: [
+    //                         [
+    //                             {
+    //                                 text: "DEVOSOFT",
+    //                                 url: "https://t.me/devosoftuz"
+    //                             }
+    //                         ],
+    //                         [
+    //                             {
+    //                                 text: "Obuna bo'ldim",
+    //                                 callback_data: "ok"
+    //                             }
+    //                         ]
+    //                     ],
+    //                 }
+    //             })
+    //         }
 
-            else if (contactUser.language == "rus") {
-                bot.sendMessage(msg.chat.id, "Подпишитесь на канал, чтобы проголосовать!", {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [
-                                {
-                                    text: "DEVOSOFT",
-                                    url: "https://t.me/devosoftuz"
-                                }
-                            ],
-                            [
-                                {
-                                    text: "Obuna bo'ldim",
-                                    callback_data: "ok"
-                                }
-                            ]
-                        ],
-                    }
-                })
-            }
+    //         else if (contactUser.language == "rus") {
+    //             bot.sendMessage(msg.chat.id, "Подпишитесь на канал, чтобы проголосовать!", {
+    //                 reply_markup: {
+    //                     inline_keyboard: [
+    //                         [
+    //                             {
+    //                                 text: "DEVOSOFT",
+    //                                 url: "https://t.me/devosoftuz"
+    //                             }
+    //                         ],
+    //                         [
+    //                             {
+    //                                 text: "Obuna bo'ldim",
+    //                                 callback_data: "ok"
+    //                             }
+    //                         ]
+    //                     ],
+    //                 }
+    //             })
+    //         }
 
-            else if (contactUser.language == "eng") {
-                bot.sendMessage(msg.chat.id, "Subscribe to the channel to vote!", {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [
-                                {
-                                    text: "DEVOSOFT",
-                                    url: "https://t.me/devosoftuz"
-                                }
-                            ],
-                            [
-                                {
-                                    text: "Obuna bo'ldim",
-                                    callback_data: "ok"
-                                }
-                            ]
-                        ],
-                    }
-                })
-            }
+    //         else if (contactUser.language == "eng") {
+    //             bot.sendMessage(msg.chat.id, "Subscribe to the channel to vote!", {
+    //                 reply_markup: {
+    //                     inline_keyboard: [
+    //                         [
+    //                             {
+    //                                 text: "DEVOSOFT",
+    //                                 url: "https://t.me/devosoftuz"
+    //                             }
+    //                         ],
+    //                         [
+    //                             {
+    //                                 text: "Obuna bo'ldim",
+    //                                 callback_data: "ok"
+    //                             }
+    //                         ]
+    //                     ],
+    //                 }
+    //             })
+    //         }
 
-            try {
-                if (contactUser) {
-                    for (let i in users) {
-                        if (users[i].id == msg.chat.id) {
-                            users[i].phone_number = msg.contact.phone_number;
-                        }
-                    }
-                    write_file('users', users);
+    //         try {
+    //             if (contactUser) {
+    //                 for (let i in users) {
+    //                     if (users[i].id == msg.chat.id) {
+    //                         users[i].phone_number = msg.contact.phone_number;
+    //                     }
+    //                 }
+    //                 write_file('users', users);
+    //             }
+    //         }
+    //         catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    //     else {
+    //         if (contactUser.language == "uzb") {
+    //             bot.sendMessage(msg.chat.id, "Iltimos o'zingizni telefon raqamingizni yuboring!")
+    //         }
+
+    //         else if (contactUser.language == "rus") {
+    //             bot.sendMessage(msg.chat.id, "Пожалуйста, пришлите свой номер телефона!")
+    //         }
+
+    //         else if (contactUser.language == "uzb") {
+    //             bot.sendMessage(msg.chat.id, "Please send yourself your phone number!")
+    //         }
+    //     }
+    // })
+})
+
+
+bot.on("contact", (msg) => {
+    let contactUser = users.find(s => s.id == msg.from.id);
+    if (msg.chat.id == msg.contact.user_id) {
+        if (contactUser.language == "uzb") {
+            bot.sendMessage(msg.chat.id, "Ovoz berish uchun iltimos kanalga azo bo'ling!", {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "DEVOSOFT",
+                                url: "https://t.me/devosoftuz"
+                            }
+                        ],
+                        [
+                            {
+                                text: "Obuna bo'ldim",
+                                callback_data: "ok"
+                            }
+                        ]
+                    ],
                 }
-            }
-            catch (error) {
-                console.log(error);
+            })
+        }
+
+        else if (contactUser.language == "rus") {
+            bot.sendMessage(msg.chat.id, "Подпишитесь на канал, чтобы проголосовать!", {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "DEVOSOFT",
+                                url: "https://t.me/devosoftuz"
+                            }
+                        ],
+                        [
+                            {
+                                text: "Obuna bo'ldim",
+                                callback_data: "ok"
+                            }
+                        ]
+                    ],
+                }
+            })
+        }
+
+        else if (contactUser.language == "eng") {
+            bot.sendMessage(msg.chat.id, "Subscribe to the channel to vote!", {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "DEVOSOFT",
+                                url: "https://t.me/devosoftuz"
+                            }
+                        ],
+                        [
+                            {
+                                text: "Obuna bo'ldim",
+                                callback_data: "ok"
+                            }
+                        ]
+                    ],
+                }
+            })
+        }
+
+        try {
+            if (contactUser) {
+                for (let i in users) {
+                    if (users[i].id == msg.chat.id) {
+                        users[i].phone_number = msg.contact.phone_number;
+                    }
+                }
+                write_file('users', users);
             }
         }
-        else {
-            if (contactUser.language == "uzb") {
-                bot.sendMessage(msg.chat.id, "Iltimos o'zingizni telefon raqamingizni yuboring!")
-            }
-
-            else if (contactUser.language == "rus") {
-                bot.sendMessage(msg.chat.id, "Пожалуйста, пришлите свой номер телефона!")
-            }
-
-            else if (contactUser.language == "uzb") {
-                bot.sendMessage(msg.chat.id, "Please send yourself your phone number!")
-            }
+        catch (error) {
+            console.log(error);
         }
-    })
+    }
+    else {
+        if (contactUser.language == "uzb") {
+            bot.sendMessage(msg.chat.id, "Iltimos o'zingizni telefon raqamingizni yuboring!")
+        }
+
+        else if (contactUser.language == "rus") {
+            bot.sendMessage(msg.chat.id, "Пожалуйста, пришлите свой номер телефона!")
+        }
+
+        else if (contactUser.language == "uzb") {
+            bot.sendMessage(msg.chat.id, "Please send yourself your phone number!")
+        }
+    }
 })
