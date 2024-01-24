@@ -8,8 +8,10 @@ const channelId = '@ovozber_chat';
 let users = read_file('users');
 let saylanuvchi = read_file('saylanuvchi');
 let votes = read_file('ovoz');
+let admin = read_file('admin')
 let phone = ""
 let saylan = 0
+let inlineKeyboard = [];
 
 
 bot.onText(/start/, msg => {
@@ -22,38 +24,7 @@ bot.onText(/start/, msg => {
             bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nSaylanuvchilar ro'yhati 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: "Eshmat Eshmatov",
-                                callback_data: 1
-                            },
-                            {
-                                text: "Toshmat Toshmatov",
-                                callback_data: 2
-                            },
-                        ],
-                        [
-                            {
-                                text: "John Doe",
-                                callback_data: 3
-                            },
-                            {
-                                text: "Ahmediv Avaz",
-                                callback_data: 4
-                            },
-                        ],
-                        [
-                            {
-                                text: "Kimsan Kimsanov",
-                                callback_data: 5
-                            },
-                            {
-                                text: "O'tirdiyev Turdi",
-                                callback_data: 6
-                            }
-                        ],
-                    ],
+                    inline_keyboard: inlineKeyboard
                 }
             })
         }
@@ -65,38 +36,7 @@ bot.onText(/start/, msg => {
             bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок выборщиков 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: "Eshmat Eshmatov",
-                                callback_data: 1
-                            },
-                            {
-                                text: "Toshmat Toshmatov",
-                                callback_data: 2
-                            },
-                        ],
-                        [
-                            {
-                                text: "John Doe",
-                                callback_data: 3
-                            },
-                            {
-                                text: "Ahmediv Avaz",
-                                callback_data: 4
-                            },
-                        ],
-                        [
-                            {
-                                text: "Kimsan Kimsanov",
-                                callback_data: 5
-                            },
-                            {
-                                text: "O'tirdiyev Turdi",
-                                callback_data: 6
-                            }
-                        ],
-                    ],
+                    inline_keyboard: inlineKeyboard
                 }
             })
         }
@@ -108,38 +48,7 @@ bot.onText(/start/, msg => {
             bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of voters 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: "Eshmat Eshmatov",
-                                callback_data: 1
-                            },
-                            {
-                                text: "Toshmat Toshmatov",
-                                callback_data: 2
-                            },
-                        ],
-                        [
-                            {
-                                text: "John Doe",
-                                callback_data: 3
-                            },
-                            {
-                                text: "Ahmediv Avaz",
-                                callback_data: 4
-                            },
-                        ],
-                        [
-                            {
-                                text: "Kimsan Kimsanov",
-                                callback_data: 5
-                            },
-                            {
-                                text: "O'tirdiyev Turdi",
-                                callback_data: 6
-                            }
-                        ],
-                    ],
+                    inline_keyboard: inlineKeyboard
                 }
             })
         }
@@ -179,38 +88,7 @@ bot.onText(/start/, msg => {
             bot.sendMessage(msg.message.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nSaylanuvchilar ro'yhati 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: "Eshmat Eshmatov",
-                                callback_data: 1
-                            },
-                            {
-                                text: "Toshmat Toshmatov",
-                                callback_data: 2
-                            },
-                        ],
-                        [
-                            {
-                                text: "John Doe",
-                                callback_data: 3
-                            },
-                            {
-                                text: "Ahmediv Avaz",
-                                callback_data: 4
-                            },
-                        ],
-                        [
-                            {
-                                text: "Kimsan Kimsanov",
-                                callback_data: 5
-                            },
-                            {
-                                text: "O'tirdiyev Turdi",
-                                callback_data: 6
-                            }
-                        ],
-                    ],
+                    inline_keyboard: inlineKeyboard
                 }
             })
         }
@@ -221,38 +99,7 @@ bot.onText(/start/, msg => {
             bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок выборщиков 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: "Eshmat Eshmatov",
-                                callback_data: 1
-                            },
-                            {
-                                text: "Toshmat Toshmatov",
-                                callback_data: 2
-                            },
-                        ],
-                        [
-                            {
-                                text: "John Doe",
-                                callback_data: 3
-                            },
-                            {
-                                text: "Ahmediv Avaz",
-                                callback_data: 4
-                            },
-                        ],
-                        [
-                            {
-                                text: "Kimsan Kimsanov",
-                                callback_data: 5
-                            },
-                            {
-                                text: "O'tirdiyev Turdi",
-                                callback_data: 6
-                            }
-                        ],
-                    ],
+                    inline_keyboard: inlineKeyboard
                 }
             })
         }
@@ -263,38 +110,7 @@ bot.onText(/start/, msg => {
             bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of voters 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: "Eshmat Eshmatov",
-                                callback_data: 1
-                            },
-                            {
-                                text: "Toshmat Toshmatov",
-                                callback_data: 2
-                            },
-                        ],
-                        [
-                            {
-                                text: "John Doe",
-                                callback_data: 3
-                            },
-                            {
-                                text: "Ahmediv Avaz",
-                                callback_data: 4
-                            },
-                        ],
-                        [
-                            {
-                                text: "Kimsan Kimsanov",
-                                callback_data: 5
-                            },
-                            {
-                                text: "O'tirdiyev Turdi",
-                                callback_data: 6
-                            }
-                        ],
-                    ],
+                    inline_keyboard: inlineKeyboard
                 }
             })
         }
@@ -431,7 +247,7 @@ bot.on("contact", (msg) => {
         if (!ovozUser) {
             checkSubscription(msg.from.id)
                 .then(isSubscribed => {
-                    if (isSubscribed) {
+                    if (isSubscribed || process.env.SUPER_ADMIN == msg.from.id) {
                         console.log('Tastiqlandi');
                         let ovoz = {
                             ovoz_phone: phone
@@ -616,3 +432,105 @@ async function checkSubscription(userId) {
         return false;
     }
 }
+
+
+for (i in saylanuvchi) {
+    let row = [
+        {
+            text: saylanuvchi[i].name,
+            callback_data: saylanuvchi[i].id
+        }
+    ];
+
+    inlineKeyboard.push(row);
+
+}
+
+// SUPER ADMIN MENU
+
+let superAdminMenu = [
+    [
+        {
+            text: "Foydalanuvchilar 👥"
+        }
+    ],
+    [
+        {
+            text: "Adminlar 👨🏻‍💻"
+        },
+        {
+            text: "Saylanuvchilar 🙋🏻‍♂️"
+        }
+    ],
+    [
+        {
+            text: "Majburiy obuna ✅"
+        },
+        {
+            text: "Reklama joylash 📱"
+        }
+    ],
+    [
+        {
+            text: "Menuni yopish 🔽"
+        }
+    ]
+]
+
+
+
+let adminMenu = [
+    [
+        {
+            text: "Foydalanuvchilar 👥"
+        },
+        {
+            text: "Saylanuvchilar 🙋🏻‍♂️"
+        }
+    ],
+    [
+        {
+            text: "Majburiy obuna ✅"
+        },
+        {
+            text: "Reklama joylash 📱"
+        }
+    ],
+    [
+        {
+            text: "Menuni yopish 🔽"
+        }
+    ]
+]
+
+// ADMIN PANEL
+
+bot.on("message", msg => {
+    let SuperAdmin = process.env.SUPER_ADMIN == msg.chat.id
+    let superAdminFind = admin.find(s => s.super_admin == msg.chat.id)
+    let adminFind = admin.find(s => s.admin == msg.chat.id)
+    if (msg.text == "Assalomu alaykum" && (superAdminFind || process.env.SUPER_ADMIN == msg.chat.id)) {
+        bot.sendMessage(msg.chat.id, "Assalomu alaykum Boss 😎", {
+            reply_markup: {
+                keyboard: superAdminMenu,
+                resize_keyboard: true
+            }
+        })
+    }
+
+    else if (msg.text == "Assalomu alaykum" && adminFind) {
+        bot.sendMessage(msg.chat.id, "Assalomu alaykum Boss 😎", {
+            reply_markup: {
+                keyboard: adminMenu,
+                resize_keyboard: true
+            }
+        })
+    }
+
+
+    else if (msg.text == "Menuni yopish 🔽" && (adminFind || superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "Xayir Boss 😎", {
+            reply_markup: { remove_keyboard: true }
+        })
+    }
+})
