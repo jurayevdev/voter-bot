@@ -477,7 +477,7 @@ let superAdminMenu = [
     ]
 ]
 
-
+// ADMIN MENU
 
 let adminMenu = [
     [
@@ -509,8 +509,10 @@ bot.on("message", msg => {
     let SuperAdmin = process.env.SUPER_ADMIN == msg.chat.id
     let superAdminFind = admin.find(s => s.super_admin == msg.chat.id)
     let adminFind = admin.find(s => s.admin == msg.chat.id)
+    let text = msg.text.slice(0, 4)
     if (msg.text == "Assalomu alaykum" && (superAdminFind || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "Assalomu alaykum Boss 😎", {
+            parse_mode: 'HTML',
             reply_markup: {
                 keyboard: superAdminMenu,
                 resize_keyboard: true
@@ -520,6 +522,7 @@ bot.on("message", msg => {
 
     else if (msg.text == "Assalomu alaykum" && adminFind) {
         bot.sendMessage(msg.chat.id, "Assalomu alaykum Boss 😎", {
+            parse_mode: 'HTML',
             reply_markup: {
                 keyboard: adminMenu,
                 resize_keyboard: true
@@ -529,12 +532,14 @@ bot.on("message", msg => {
 
     else if (msg.text == "Menuni yopish 🔽" && (adminFind || superAdminFind || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "Xayir Boss 😎", {
+            parse_mode: 'HTML',
             reply_markup: { remove_keyboard: true }
         })
     }
 
     else if (msg.text == "🔙 Orqaga" && (superAdminFind || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "Assosiy menu ochildi!", {
+            parse_mode: 'HTML',
             reply_markup: {
                 keyboard: superAdminMenu,
                 resize_keyboard: true
@@ -544,6 +549,7 @@ bot.on("message", msg => {
 
     else if (msg.text == "🔙 Orqaga" && adminFind) {
         bot.sendMessage(msg.chat.id, "Assosiy menu ochildi!", {
+            parse_mode: 'HTML',
             reply_markup: {
                 keyboard: adminMenu,
                 resize_keyboard: true
@@ -551,8 +557,11 @@ bot.on("message", msg => {
         })
     }
 
+    // Adminlar menusi start
+
     else if (msg.text == "Adminlar 👨🏻‍💻" && (superAdminFind || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "Adminlar menusi ochildi!", {
+            parse_mode: 'HTML',
             reply_markup: {
                 keyboard: [
                     [
@@ -565,7 +574,7 @@ bot.on("message", msg => {
                         {
                             text: "Admin qo'shish 📥"
                         }
-                        
+
                     ],
                     [
                         {
@@ -586,8 +595,66 @@ bot.on("message", msg => {
         })
     }
 
+    else if (msg.text == "Adminlar soni 📊" && (superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, `Hozirda ${admin.length} ta Admin bor`,{
+            parse_mode: 'HTML',
+        })
+    }
+
+    else if (msg.text == "Adminlar ro'yxati 📄" && (superAdminFind || SuperAdmin)) {
+        let adminRoyxat = []
+        for (i in admin) {
+            let adminSearch = users.find(s => s.id == admin[i].admin)
+            if (adminSearch) {
+                let adminRoyxatChild = `Nomi: ${adminSearch.first_name}\nUsername: @${adminSearch.username}\nTelefon raqami: ${adminSearch.phone_number}\n\n`
+                adminRoyxat.push(adminRoyxatChild)
+            }
+        }
+
+        adminRoyxat = String(adminRoyxat).replace(/,/g, "")
+
+        bot.sendMessage(msg.chat.id, `${adminRoyxat}`,{
+            parse_mode: 'HTML',
+        })
+    }
+
+    else if (msg.text == "Admin qo'shish 📥" && (superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "Qo'shmoqchi bo'lgan admin nomini kiriting..\n\nMisol uchun:\n\nNomi--Eshmat",{
+            parse_mode: 'HTML',
+        })
+    }
+
+    else if (text == "Nomi" && (superAdminFind || SuperAdmin)) {
+        let name = msg.text.slice(6)
+        let adminSearch = users.find(s => s.first_name == name)
+        if (adminSearch) {
+            let adminWrite = admin.find(s => s.admin == adminSearch.id)
+            if (!adminWrite) {
+                admin.push({
+                    admin: adminSearch.id
+                })
+                write_file('admin', admin)
+                bot.sendMessage(msg.chat.id, `<b>Admin qo'shildi..!</b>\n\nQo'shilgan admin ma'lumotlari\n\n${adminSearch.first_name}\n${adminSearch.username}\n${adminSearch.phone_number}`,{
+                    parse_mode: 'HTML',
+                })
+            }
+            else {
+                bot.sendMessage(msg.chat.id, `<b>Admin qo'shilmadi...</b>\n\nBu foydalanuvchi oldin Adminlar ro'yxatiga qo'shilgan`,{
+                    parse_mode: 'HTML',
+                })
+            }
+        }
+        else {
+            bot.sendMessage(msg.chat.id, `<b>Admin qo'shilmadi...</b>\n\nBunday foydalanuchi ro'yxatdan o'tmagan!`,{
+                parse_mode: 'HTML',
+            })
+        }
+    }
+    // Adminlar menusi end
+
     else if (msg.text == "Foydalanuvchilar 👥" && (adminFind || superAdminFind || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "Foydalanuvchilar menusi ochildi!", {
+            parse_mode: 'HTML',
             reply_markup: {
                 keyboard: [
                     [
@@ -611,6 +678,7 @@ bot.on("message", msg => {
 
     else if (msg.text == "Saylanuvchilar 🙋🏻‍♂️" && (adminFind || superAdminFind || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "Saylanuvchilar menusi ochildi!", {
+            parse_mode: 'HTML',
             reply_markup: {
                 keyboard: [
                     [
@@ -655,6 +723,7 @@ bot.on("message", msg => {
 
     else if (msg.text == "Majburiy obuna ✅" && (adminFind || superAdminFind || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "Majburiy obuna menusi ochildi!", {
+            parse_mode: 'HTML',
             reply_markup: {
                 keyboard: [
                     [
