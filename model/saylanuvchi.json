@@ -2,7 +2,7 @@
     {
         "id": 1,
         "name": "Eshmat Eshmatov",
-        "ovoz": 6
+        "ovoz": 7
     },
     {
         "id": 2,
@@ -10,16 +10,18 @@
     },
     {
         "id": 3,
-        "name": "John Doe"
+        "name": "John Doe",
+        "ovoz": 1
     },
     {
         "id": 4,
         "name": "Ahmediv Avaz",
-        "ovoz": 4
+        "ovoz": 5
     },
     {
         "id": 5,
-        "name": "Kimsan Kimsanov"
+        "name": "Kimsan Kimsanov",
+        "ovoz": 1
     },
     {
         "id": 6,

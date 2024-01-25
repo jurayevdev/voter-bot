@@ -1,11 +1,16 @@
 [
     {
-        "admin": 5214859281
+        "id": 2012098674,
+        "first_name": "Davlat",
+        "username": "jurayevlife",
+        "language": "uzb",
+        "phone_number": "+998330237376"
     },
     {
-        "admin": 6773553870
-    },
-    {
-        "admin": 2012098674
+        "id": 6773553870,
+        "first_name": "Sudo",
+        "username": "sudouzb",
+        "language": "uzb",
+        "phone_number": "+998937030951"
     }
 ]

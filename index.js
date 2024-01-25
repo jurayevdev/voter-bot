@@ -4,7 +4,8 @@ const { read_file, write_file } = require('./fs/fs');
 
 const bot = new TelegramBot(process.env.BOT_API_KEY, { polling: true })
 
-const channelId = '@ovozber_chat';
+let changeChanel = read_file('chanell')
+const channelId = changeChanel[0].id;
 let users = read_file('users');
 let saylanuvchi = read_file('saylanuvchi');
 let votes = read_file('ovoz');
@@ -505,13 +506,16 @@ let adminMenu = [
 
 // ADMIN PANEL
 
-bot.on("message", msg => {
+bot.on("text", msg => {
     let SuperAdmin = process.env.SUPER_ADMIN == msg.chat.id
     let superAdminFind = admin.find(s => s.super_admin == msg.chat.id)
-    let adminFind = admin.find(s => s.admin == msg.chat.id)
-    let text = msg.text.slice(0, 4)
+    let adminFind = admin.find(s => s.id == msg.chat.id)
+    let textAdd = msg.text.slice(0, 3)
+    let textDel = msg.text.slice(0, 6)
+    let textChange = msg.text.slice(0, 6)
+
     if (msg.text == "Assalomu alaykum" && (superAdminFind || SuperAdmin)) {
-        bot.sendMessage(msg.chat.id, "Assalomu alaykum Boss 😎", {
+        bot.sendMessage(msg.chat.id, "<b>Assalomu alaykum Boss 😎</b>", {
             parse_mode: 'HTML',
             reply_markup: {
                 keyboard: superAdminMenu,
@@ -521,7 +525,7 @@ bot.on("message", msg => {
     }
 
     else if (msg.text == "Assalomu alaykum" && adminFind) {
-        bot.sendMessage(msg.chat.id, "Assalomu alaykum Boss 😎", {
+        bot.sendMessage(msg.chat.id, "<b>Assalomu alaykum Boss 😎</b>", {
             parse_mode: 'HTML',
             reply_markup: {
                 keyboard: adminMenu,
@@ -531,14 +535,14 @@ bot.on("message", msg => {
     }
 
     else if (msg.text == "Menuni yopish 🔽" && (adminFind || superAdminFind || SuperAdmin)) {
-        bot.sendMessage(msg.chat.id, "Xayir Boss 😎", {
+        bot.sendMessage(msg.chat.id, "<b>Xayir Boss 😎</b>", {
             parse_mode: 'HTML',
             reply_markup: { remove_keyboard: true }
         })
     }
 
     else if (msg.text == "🔙 Orqaga" && (superAdminFind || SuperAdmin)) {
-        bot.sendMessage(msg.chat.id, "Assosiy menu ochildi!", {
+        bot.sendMessage(msg.chat.id, "<b>Assosiy menu ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
                 keyboard: superAdminMenu,
@@ -548,7 +552,7 @@ bot.on("message", msg => {
     }
 
     else if (msg.text == "🔙 Orqaga" && adminFind) {
-        bot.sendMessage(msg.chat.id, "Assosiy menu ochildi!", {
+        bot.sendMessage(msg.chat.id, "<b>Assosiy menu ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
                 keyboard: adminMenu,
@@ -560,7 +564,7 @@ bot.on("message", msg => {
     // Adminlar menusi start
 
     else if (msg.text == "Adminlar 👨🏻‍💻" && (superAdminFind || SuperAdmin)) {
-        bot.sendMessage(msg.chat.id, "Adminlar menusi ochildi!", {
+        bot.sendMessage(msg.chat.id, "<b>Adminlar menusi ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
                 keyboard: [
@@ -596,64 +600,111 @@ bot.on("message", msg => {
     }
 
     else if (msg.text == "Adminlar soni 📊" && (superAdminFind || SuperAdmin)) {
-        bot.sendMessage(msg.chat.id, `Hozirda ${admin.length} ta Admin bor`,{
+        bot.sendMessage(msg.chat.id, `Hozirda <b>${admin.length}</b> ta Admin bor`, {
             parse_mode: 'HTML',
         })
     }
 
     else if (msg.text == "Adminlar ro'yxati 📄" && (superAdminFind || SuperAdmin)) {
         let adminRoyxat = []
-        for (i in admin) {
-            let adminSearch = users.find(s => s.id == admin[i].admin)
-            if (adminSearch) {
-                let adminRoyxatChild = `Nomi: ${adminSearch.first_name}\nUsername: @${adminSearch.username}\nTelefon raqami: ${adminSearch.phone_number}\n\n`
+        if (admin.length > 0) {
+            for (i in admin) {
+                let adminRoyxatChild = `<b>Ismi:</b> ${admin[i].first_name}\n<b>Username:</b> @${admin[i].username}\n<b>Telefon raqami:</b> ${admin[i].phone_number}\n\n`
                 adminRoyxat.push(adminRoyxatChild)
             }
+            adminRoyxat = String(adminRoyxat).replace(/,/g, "")
+
+            bot.sendMessage(msg.chat.id, `${adminRoyxat}`, {
+                parse_mode: 'HTML',
+            })
         }
-
-        adminRoyxat = String(adminRoyxat).replace(/,/g, "")
-
-        bot.sendMessage(msg.chat.id, `${adminRoyxat}`,{
-            parse_mode: 'HTML',
-        })
+        else {
+            bot.sendMessage(msg.chat.id, "<b>Adminlar ro'yxati bo'sh!</b>", {
+                parse_mode: 'HTML'
+            })
+        }
     }
 
     else if (msg.text == "Admin qo'shish 📥" && (superAdminFind || SuperAdmin)) {
-        bot.sendMessage(msg.chat.id, "Qo'shmoqchi bo'lgan admin nomini kiriting..\n\nMisol uchun:\n\nNomi--Eshmat",{
+        bot.sendMessage(msg.chat.id, "<b>Qo'shmoqchi bo'lgan Admin username sini kiriting..</b>\n\n<i>Misol uchun:</i> <b>Add--@eshmat</b>", {
             parse_mode: 'HTML',
         })
     }
 
-    else if (text == "Nomi" && (superAdminFind || SuperAdmin)) {
+    else if (textAdd == "Add" && (superAdminFind || SuperAdmin)) {
         let name = msg.text.slice(6)
-        let adminSearch = users.find(s => s.first_name == name)
+        let adminSearch = users.find(s => s.username == name)
         if (adminSearch) {
-            let adminWrite = admin.find(s => s.admin == adminSearch.id)
+            let adminWrite = admin.find(s => s.id == adminSearch.id)
             if (!adminWrite) {
-                admin.push({
-                    admin: adminSearch.id
-                })
+                admin.push(adminSearch)
                 write_file('admin', admin)
-                bot.sendMessage(msg.chat.id, `<b>Admin qo'shildi..!</b>\n\nQo'shilgan admin ma'lumotlari\n\n${adminSearch.first_name}\n${adminSearch.username}\n${adminSearch.phone_number}`,{
+                bot.sendMessage(msg.chat.id, `<b>Admin qo'shildi..!</b>\n\nQo'shilgan admin ma'lumotlari\n\n<b>Ismi:</b> ${adminSearch.first_name}\n<b>Username:</b> @${adminSearch.username}\n<b>Telefon raqami:</b> ${adminSearch.phone_number}`, {
                     parse_mode: 'HTML',
                 })
             }
             else {
-                bot.sendMessage(msg.chat.id, `<b>Admin qo'shilmadi...</b>\n\nBu foydalanuvchi oldin Adminlar ro'yxatiga qo'shilgan`,{
+                bot.sendMessage(msg.chat.id, `<b>Admin qo'shilmadi...</b>\n\nBu foydalanuvchi oldin Adminlar ro'yxatiga qo'shilgan`, {
                     parse_mode: 'HTML',
                 })
             }
         }
         else {
-            bot.sendMessage(msg.chat.id, `<b>Admin qo'shilmadi...</b>\n\nBunday foydalanuchi ro'yxatdan o'tmagan!`,{
+            bot.sendMessage(msg.chat.id, `<b>Admin qo'shilmadi...</b>\n\nBunday foydalanuchi ro'yxatdan o'tmagan!`, {
                 parse_mode: 'HTML',
             })
         }
     }
+
+    else if (msg.text == "Adminlar ro'yxati tozalash ♻️" && (superAdminFind || SuperAdmin)) {
+        admin = []
+        write_file('admin', admin)
+        bot.sendMessage(msg.chat.id, "<b>Adminlar ro'yxati tozalandi!</b>", {
+            parse_mode: 'HTML'
+        })
+    }
+
+    else if (msg.text == "Admin o'chirish 🗑" && (superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "<b>O'chirmoqchi bo'lgan Admin username sini kiriting..</b>\n\n<i>Misol uchun:</i> <b>Delete--@eshmat</b>", {
+            parse_mode: 'HTML',
+        })
+    }
+
+    else if (textDel == "Delete" && (superAdminFind || SuperAdmin)) {
+        let name = msg.text.slice(9)
+        let adminSearch = admin.find(s => s.username !== name)
+        let adminEmpty = admin.find(s => s.username == name)
+        if (adminEmpty) {
+            if (adminSearch) {
+                admin = []
+                admin.push(adminSearch)
+                write_file('admin', admin)
+                bot.sendMessage(msg.chat.id, `<b>Admin o'chirildi..!</b>\n\nO'chirilgan admin ma'lumotlari\n\n<b>Ismi:</b> ${adminEmpty.first_name}\n<b>Username:</b> @${adminEmpty.username}\n<b>Telefon raqami:</b> ${adminEmpty.phone_number}`, {
+                    parse_mode: 'HTML'
+                })
+            }
+            else {
+                admin = []
+                write_file('admin', admin)
+                bot.sendMessage(msg.chat.id, `<b>Admin o'chirildi..!</b>\n\nO'chirilgan admin ma'lumotlari\n\n<b>Ismi:</b> ${adminEmpty.first_name}\n<b>Username:</b> @${adminEmpty.username}\n<b>Telefon raqami:</b> ${adminEmpty.phone_number}`, {
+                    parse_mode: 'HTML'
+                })
+            }
+        }
+        else {
+            bot.sendMessage(msg.chat.id, "<b>Admin topilmadi..</b>\n\nBunday nomdagi faydalanuvchi Adminlar ro'yxatida yo'q", {
+                parse_mode: 'HTML'
+            })
+        }
+    }
+
     // Adminlar menusi end
 
+
+    // Foydalanuvchilar menusi start
+
     else if (msg.text == "Foydalanuvchilar 👥" && (adminFind || superAdminFind || SuperAdmin)) {
-        bot.sendMessage(msg.chat.id, "Foydalanuvchilar menusi ochildi!", {
+        bot.sendMessage(msg.chat.id, "<b>Foydalanuvchilar menusi ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
                 keyboard: [
@@ -676,8 +727,39 @@ bot.on("message", msg => {
         })
     }
 
+    else if (msg.text == "Foydalanuvchilar soni 📊" && (adminFind || superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, `Hozirda <b>${users.length}</b> ta Foydalanuvchi bor`, {
+            parse_mode: 'HTML',
+        })
+    }
+
+    else if (msg.text == "Foydalanuvchilar ro'yxati 📄" && (adminFind || superAdminFind || SuperAdmin)) {
+        let usersRoyxat = []
+        if (users.length > 0) {
+            for (i in users) {
+                let usersRoyxatChild = `<b>Ismi:</b> ${users[i].first_name}\n<b>Username:</b> @${users[i].username}\n<b>Telefon raqami:</b> ${users[i].phone_number}\n\n`
+                usersRoyxat.push(usersRoyxatChild)
+            }
+            usersRoyxat = String(usersRoyxat).replace(/,/g, "")
+
+            bot.sendMessage(msg.chat.id, `${usersRoyxat}`, {
+                parse_mode: 'HTML',
+            })
+        }
+        else {
+            bot.sendMessage(msg.chat.id, "<b>Foydalanuvchilar ro'yxati bo'sh!</b>", {
+                parse_mode: 'HTML'
+            })
+        }
+    }
+
+    // Foydalanuvchilar menusi end
+
+
+    // Saylanuvchilar menusi start
+
     else if (msg.text == "Saylanuvchilar 🙋🏻‍♂️" && (adminFind || superAdminFind || SuperAdmin)) {
-        bot.sendMessage(msg.chat.id, "Saylanuvchilar menusi ochildi!", {
+        bot.sendMessage(msg.chat.id, "<b>Saylanuvchilar menusi ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
                 keyboard: [
@@ -721,8 +803,13 @@ bot.on("message", msg => {
         })
     }
 
+    // Saylanuvchilar menusi end
+
+
+    // Majburiy obuna menusi start
+
     else if (msg.text == "Majburiy obuna ✅" && (adminFind || superAdminFind || SuperAdmin)) {
-        bot.sendMessage(msg.chat.id, "Majburiy obuna menusi ochildi!", {
+        bot.sendMessage(msg.chat.id, "<b>Majburiy obuna menusi ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
                 keyboard: [
@@ -739,5 +826,23 @@ bot.on("message", msg => {
             }
         })
     }
+
+    else if (msg.text == "Kanalni alamashtirish 🔄" && (adminFind || superAdminFind || SuperAdmin)){
+        bot.sendMessage(msg.chat.id, "<b>Almashtirmoqchi bo'lgan Kanal username sini kiriting..</b>\n\n<i>Misol uchun:</i> <b>Change--@kunuz</b>", {
+            parse_mode: 'HTML',
+        })
+    }
+
+    else if (textChange == "Change" && (adminFind || superAdminFind || SuperAdmin)){
+        changeChanel = [{
+           id: msg.text.slice(8)
+        }]
+        write_file('chanell', changeChanel)
+        bot.sendMessage(msg.chat.id, "<b>Kanal almashtirildi..!</b>",{
+            parse_mode: 'HTML'
+        })
+    }
+
+    // Majburiy obuna menusi end
 
 })
