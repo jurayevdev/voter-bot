@@ -509,7 +509,7 @@ bot.on("message", msg => {
     let SuperAdmin = process.env.SUPER_ADMIN == msg.chat.id
     let superAdminFind = admin.find(s => s.super_admin == msg.chat.id)
     let adminFind = admin.find(s => s.admin == msg.chat.id)
-    if (msg.text == "Assalomu alaykum" && (superAdminFind || process.env.SUPER_ADMIN == msg.chat.id)) {
+    if (msg.text == "Assalomu alaykum" && (superAdminFind || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "Assalomu alaykum Boss 😎", {
             reply_markup: {
                 keyboard: superAdminMenu,
@@ -527,10 +527,148 @@ bot.on("message", msg => {
         })
     }
 
-
     else if (msg.text == "Menuni yopish 🔽" && (adminFind || superAdminFind || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "Xayir Boss 😎", {
             reply_markup: { remove_keyboard: true }
         })
     }
+
+    else if (msg.text == "🔙 Orqaga" && (superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "Assosiy menu ochildi!", {
+            reply_markup: {
+                keyboard: superAdminMenu,
+                resize_keyboard: true
+            }
+        })
+    }
+
+    else if (msg.text == "🔙 Orqaga" && adminFind) {
+        bot.sendMessage(msg.chat.id, "Assosiy menu ochildi!", {
+            reply_markup: {
+                keyboard: adminMenu,
+                resize_keyboard: true
+            }
+        })
+    }
+
+    else if (msg.text == "Adminlar 👨🏻‍💻" && (superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "Adminlar menusi ochildi!", {
+            reply_markup: {
+                keyboard: [
+                    [
+                        {
+                            text: "Adminlar soni 📊"
+                        },
+                        {
+                            text: "Adminlar ro'yxati 📄"
+                        },
+                        {
+                            text: "Admin qo'shish 📥"
+                        }
+                        
+                    ],
+                    [
+                        {
+                            text: "Adminlar ro'yxati tozalash ♻️"
+                        },
+                        {
+                            text: "Admin o'chirish 🗑"
+                        }
+                    ],
+                    [
+                        {
+                            text: "🔙 Orqaga"
+                        }
+                    ]
+                ],
+                resize_keyboard: true
+            }
+        })
+    }
+
+    else if (msg.text == "Foydalanuvchilar 👥" && (adminFind || superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "Foydalanuvchilar menusi ochildi!", {
+            reply_markup: {
+                keyboard: [
+                    [
+                        {
+                            text: "Foydalanuvchilar soni 📊"
+                        },
+                        {
+                            text: "Foydalanuvchilar ro'yxati 📄"
+                        }
+                    ],
+                    [
+                        {
+                            text: "🔙 Orqaga"
+                        }
+                    ]
+                ],
+                resize_keyboard: true
+            }
+        })
+    }
+
+    else if (msg.text == "Saylanuvchilar 🙋🏻‍♂️" && (adminFind || superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "Saylanuvchilar menusi ochildi!", {
+            reply_markup: {
+                keyboard: [
+                    [
+                        {
+                            text: "Saylanuvchilar soni 📊"
+                        },
+                        {
+                            text: "Saylanuvchilar ro'yxati 📄"
+                        }
+                    ],
+                    [
+                        {
+                            text: "Saylanuvchilar statistikasi 📊"
+                        }
+                    ],
+                    [
+                        {
+                            text: "Saylanuvchi qo'shish 📥"
+                        },
+                        {
+                            text: "Saylanuvchi o'chirish 🗑"
+                        }
+                    ],
+                    [
+                        {
+                            text: "Saylanuvchilar ro'yxatini tozalash ♻️"
+                        }
+                    ],
+                    [
+                        {
+                            text: "Ovozlarni tozalash ♻️"
+                        },
+                        {
+                            text: "🔙 Orqaga"
+                        }
+                    ]
+                ],
+                resize_keyboard: true
+            }
+        })
+    }
+
+    else if (msg.text == "Majburiy obuna ✅" && (adminFind || superAdminFind || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "Majburiy obuna menusi ochildi!", {
+            reply_markup: {
+                keyboard: [
+                    [
+                        {
+                            text: "Kanalni alamashtirish 🔄"
+                        },
+                        {
+                            text: "🔙 Orqaga"
+                        }
+                    ]
+                ],
+                resize_keyboard: true
+            }
+        })
+    }
+
 })
