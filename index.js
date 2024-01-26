@@ -18,40 +18,61 @@ let inlineKeyboard = [];
 bot.onText(/start/, msg => {
     let foundedUser = users.find(s => s.id == msg.from.id);
     if (foundedUser) {
-        if (foundedUser.language == "uzb") {
-            bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz 😀</b>", {
-                parse_mode: 'HTML',
-            })
-            bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nSaylanuvchilar ro'yhati 👇🏻</b>", {
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: inlineKeyboard
-                }
-            })
-        }
+        if (saylanuvchi.length > 0) {
+            if (foundedUser.language == "uzb") {
+                bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz 😀</b>", {
+                    parse_mode: 'HTML',
+                })
+                bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nNomzodlar ro'yhati 👇🏻</b>", {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: inlineKeyboard
+                    }
+                })
+            }
 
-        else if (foundedUser.language == "rus") {
-            bot.sendMessage(msg.chat.id, "<b>Еще раз привет и добро пожаловать в наш бот 😀</b>", {
-                parse_mode: 'HTML',
-            })
-            bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок выборщиков 👇🏻</b>", {
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: inlineKeyboard
-                }
-            })
-        }
+            else if (foundedUser.language == "rus") {
+                bot.sendMessage(msg.chat.id, "<b>Еще раз привет и добро пожаловать в наш бот 😀</b>", {
+                    parse_mode: 'HTML',
+                })
+                bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок кандидаты 👇🏻</b>", {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: inlineKeyboard
+                    }
+                })
+            }
 
-        else if (foundedUser.language == "eng") {
-            bot.sendMessage(msg.chat.id, "<b>Hello again and welcome to our bot 😀</b>", {
-                parse_mode: 'HTML',
-            })
-            bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of voters 👇🏻</b>", {
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: inlineKeyboard
-                }
-            })
+            else if (foundedUser.language == "eng") {
+                bot.sendMessage(msg.chat.id, "<b>Hello again and welcome to our bot 😀</b>", {
+                    parse_mode: 'HTML',
+                })
+                bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of candidates 👇🏻</b>", {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: inlineKeyboard
+                    }
+                })
+            }
+        }
+        else {
+            if (foundedUser.language == "uzb") {
+                bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz 😀</b>\n<b>Hozirda Nomzodlar yo'q!</b>\n\n<i>Tashrifingiz uchun raxmat!</i>", {
+                    parse_mode: 'HTML',
+                })
+            }
+
+            else if (foundedUser.language == "rus") {
+                bot.sendMessage(msg.chat.id, "<b>Еще раз привет и добро пожаловать в наш бот 😀</b>\n<b>На данный момент кандидатов нет!</b>\n\n<i>Спасибо Вам за Ваш визит!</i>", {
+                    parse_mode: 'HTML',
+                })
+            }
+
+            else if (foundedUser.language == "eng") {
+                bot.sendMessage(msg.chat.id, "<b>Hello again and welcome to our bot 😀</b>\n<b>No candidates yet!</b>\n\n<i>Thank you for your visit!</i>", {
+                    parse_mode: 'HTML',
+                })
+            }
         }
     }
 
@@ -82,41 +103,70 @@ bot.onText(/start/, msg => {
     bot.on("callback_query", msg => {
         let langu = "eng";
         let writeUser = users.find(s => s.id == msg.from.id);
-        let searchSay = saylanuvchi.find(s => s.id == Number(msg.data));
-        if (msg.data == 'uzb') {
-            langu = "uzb"
-            bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
-            bot.sendMessage(msg.message.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nSaylanuvchilar ro'yhati 👇🏻</b>", {
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: inlineKeyboard
-                }
-            })
+        let nomzodSearch = saylanuvchi.find(s => s.id == Number(msg.data));
+        
+        if (saylanuvchi.length > 0 && (msg.data == "uzb" || msg.data == "rus" || msg.data == "eng")) {
+            if (msg.data == 'uzb') {
+                langu = "uzb"
+                bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
+                bot.sendMessage(msg.message.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nNomzodlar ro'yhati 👇🏻</b>", {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: inlineKeyboard
+                    }
+                })
+            }
+
+            else if (msg.data == 'rus') {
+                langu = "rus"
+                bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
+                bot.sendMessage(msg.message.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок кандидаты 👇🏻</b>", {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: inlineKeyboard
+                    }
+                })
+            }
+
+            else if (msg.data == 'eng') {
+                langu = "eng"
+                bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
+                bot.sendMessage(msg.message.chat.id, "<b>Who do you want to vote for?\n\nList of candidates 👇🏻</b>", {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: inlineKeyboard
+                    }
+                })
+            }
+        }
+        
+        else if (saylanuvchi.length <= 0) {
+            if (msg.data == 'uzb') {
+                langu = "uzb"
+                bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
+                bot.sendMessage(msg.message.chat.id, "<b>Hozirda Nomzodlar yo'q!</b>\n\n<i>Tashrifingiz uchun raxmat!</i>", {
+                    parse_mode: 'HTML',
+                })
+            }
+
+            else if (msg.data == 'rus') {
+                langu = "rus"
+                bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
+                bot.sendMessage(msg.message.chat.id, "<b>На данный момент кандидатов нет!</b>\n\n<i>Спасибо Вам за Ваш визит!</i>", {
+                    parse_mode: 'HTML',
+                })
+            }
+
+            else if (msg.data == 'eng') {
+                langu = "eng"
+                bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
+                bot.sendMessage(msg.message.chat.id, "<b>No candidates yet!</b>\n\n<i>Thank you for your visit!</i>", {
+                    parse_mode: 'HTML',
+                })
+            }
         }
 
-        else if (msg.data == 'rus') {
-            langu = "rus"
-            bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
-            bot.sendMessage(msg.message.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок выборщиков 👇🏻</b>", {
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: inlineKeyboard
-                }
-            })
-        }
-
-        else if (msg.data == 'eng') {
-            langu = "eng"
-            bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
-            bot.sendMessage(msg.message.chat.id, "<b>Who do you want to vote for?\n\nList of voters 👇🏻</b>", {
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: inlineKeyboard
-                }
-            })
-        }
-
-        else if (searchSay) {
+        if (nomzodSearch) {
             saylan = Number(msg.data)
             if (writeUser.language == "uzb") {
                 bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
@@ -488,7 +538,7 @@ async function checkSubscription(userId) {
 for (i in saylanuvchi) {
     let row = [
         {
-            text: saylanuvchi[i].name,
+            text: saylanuvchi[i].full_name,
             callback_data: saylanuvchi[i].id
         }
     ];
@@ -986,9 +1036,6 @@ bot.on("text", msg => {
             parse_mode: 'HTML'
         })
     }
-
-
-
 
     // Saylanuvchilar menusi end
 
