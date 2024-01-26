@@ -4,8 +4,8 @@ const { read_file, write_file } = require('./fs/fs');
 
 const bot = new TelegramBot(process.env.BOT_API_KEY, { polling: true })
 
-let changeChanel = read_file('chanell')
-const channelId = changeChanel[0].id;
+// let changeChanel = read_file('chanell')
+let channelId = '';
 let users = read_file('users');
 let saylanuvchi = read_file('saylanuvchi');
 let votes = read_file('ovoz');
@@ -97,7 +97,7 @@ bot.onText(/start/, msg => {
         else if (msg.data == 'rus') {
             langu = "rus"
             bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
-            bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок выборщиков 👇🏻</b>", {
+            bot.sendMessage(msg.message.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок выборщиков 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: inlineKeyboard
@@ -108,7 +108,7 @@ bot.onText(/start/, msg => {
         else if (msg.data == 'eng') {
             langu = "eng"
             bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
-            bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of voters 👇🏻</b>", {
+            bot.sendMessage(msg.message.chat.id, "<b>Who do you want to vote for?\n\nList of voters 👇🏻</b>", {
                 parse_mode: 'HTML',
                 reply_markup: {
                     inline_keyboard: inlineKeyboard
@@ -123,7 +123,7 @@ bot.onText(/start/, msg => {
                 bot.sendMessage(msg.message.chat.id, "Ovoz berish uchun telefon raqmingizni kiriting..!", {
                     reply_markup: {
                         keyboard: [[{
-                            text: "My phone number",
+                            text: "Mening telefon raqamim",
                             request_contact: true
                         }]],
                         resize_keyboard: true,
@@ -136,7 +136,7 @@ bot.onText(/start/, msg => {
                 bot.sendMessage(msg.message.chat.id, "Введите свой номер телефона, чтобы проголосовать..!", {
                     reply_markup: {
                         keyboard: [[{
-                            text: "My phone number",
+                            text: "Мой номер телефона",
                             request_contact: true
                         }]],
                         resize_keyboard: true,
@@ -246,122 +246,30 @@ bot.on("contact", (msg) => {
     phone = msg.contact.phone_number
     if (msg.chat.id == msg.contact.user_id) {
         if (!ovozUser) {
-            checkSubscription(msg.from.id)
-                .then(isSubscribed => {
-                    if (isSubscribed || process.env.SUPER_ADMIN == msg.from.id) {
-                        console.log('Tastiqlandi');
-                        let ovoz = {
-                            ovoz_phone: phone
-                        }
-                        votes.push(ovoz)
-                        write_file('ovoz', votes)
-
-                        for (let i in saylanuvchi) {
-                            if (saylanuvchi[i].id == saylan) {
-                                if (saylanuvchi[i].ovoz) {
-                                    saylanuvchi[i].ovoz = saylanuvchi[i].ovoz + 1;
-                                }
-                                else {
-                                    saylanuvchi[i].ovoz = 1
-                                }
-
+            if (channelId.length > 0) {
+                checkSubscription(msg.from.id)
+                    .then(isSubscribed => {
+                        if (isSubscribed || (process.env.SUPER_ADMIN == msg.from.id || process.env.OWNER == msg.from.id)) {
+                            console.log('Tastiqlandi');
+                            let ovoz = {
+                                ovoz_phone: phone
                             }
-                        }
-                        write_file('saylanuvchi', saylanuvchi);
+                            votes.push(ovoz)
+                            write_file('ovoz', votes)
 
-                        if (contactUser) {
-                            for (let i in users) {
-                                if (users[i].id == msg.chat.id) {
-                                    users[i].phone_number = msg.contact.phone_number;
+                            for (let i in saylanuvchi) {
+                                if (saylanuvchi[i].id == saylan) {
+                                    if (saylanuvchi[i].ovoz) {
+                                        saylanuvchi[i].ovoz = saylanuvchi[i].ovoz + 1;
+                                    }
+                                    else {
+                                        saylanuvchi[i].ovoz = 1
+                                    }
+
                                 }
                             }
-                            write_file('users', users);
-                        }
+                            write_file('saylanuvchi', saylanuvchi);
 
-                        if (contactUser.language == "uzb") {
-                            bot.sendMessage(msg.from.id, "Ovoz berganingiz uchun raxmat 😊", {
-                                reply_markup: { remove_keyboard: true }
-                            })
-                        }
-
-                        else if (contactUser.language == "rus") {
-                            bot.sendMessage(msg.from.id, "Спасибо за ваш голос 😊", {
-                                reply_markup: { remove_keyboard: true }
-                            })
-                        }
-
-                        else if (contactUser.language == "eng") {
-                            bot.sendMessage(msg.from.id, "Thank you for voting 😊", {
-                                reply_markup: { remove_keyboard: true }
-                            })
-                        }
-                    }
-                    else {
-                        console.log('Tastiqlanmadi');
-                        if (contactUser.language == "uzb") {
-                            bot.sendMessage(msg.chat.id, "Ovoz berish uchun iltimos kanalga azo bo'ling!", {
-                                reply_markup: {
-                                    inline_keyboard: [
-                                        [
-                                            {
-                                                text: "DEVOSOFT",
-                                                url: "https://t.me/ovozber_chat"
-                                            }
-                                        ],
-                                        [
-                                            {
-                                                text: "Obuna bo'ldim",
-                                                callback_data: "subscribe"
-                                            }
-                                        ]
-                                    ],
-                                }
-                            })
-                        }
-
-                        else if (contactUser.language == "rus") {
-                            bot.sendMessage(msg.chat.id, "Подпишитесь на канал, чтобы проголосовать!", {
-                                reply_markup: {
-                                    inline_keyboard: [
-                                        [
-                                            {
-                                                text: "DEVOSOFT",
-                                                url: "https://t.me/ovozber_chat"
-                                            }
-                                        ],
-                                        [
-                                            {
-                                                text: "Obuna bo'ldim",
-                                                callback_data: "subscribe"
-                                            }
-                                        ]
-                                    ],
-                                }
-                            })
-                        }
-
-                        else if (contactUser.language == "eng") {
-                            bot.sendMessage(msg.chat.id, "Subscribe to the channel to vote!", {
-                                reply_markup: {
-                                    inline_keyboard: [
-                                        [
-                                            {
-                                                text: "DEVOSOFT",
-                                                url: "https://t.me/ovozber_chat"
-                                            }
-                                        ],
-                                        [
-                                            {
-                                                text: "Obuna bo'ldim",
-                                                callback_data: "subscribe"
-                                            }
-                                        ]
-                                    ],
-                                }
-                            })
-                        }
-
-                        try {
                             if (contactUser) {
                                 for (let i in users) {
                                     if (users[i].id == msg.chat.id) {
@@ -370,13 +278,155 @@ bot.on("contact", (msg) => {
                                 }
                                 write_file('users', users);
                             }
+
+                            if (contactUser.language == "uzb") {
+                                bot.sendMessage(msg.from.id, "Ovoz berganingiz uchun raxmat 😊", {
+                                    reply_markup: { remove_keyboard: true }
+                                })
+                            }
+
+                            else if (contactUser.language == "rus") {
+                                bot.sendMessage(msg.from.id, "Спасибо за ваш голос 😊", {
+                                    reply_markup: { remove_keyboard: true }
+                                })
+                            }
+
+                            else if (contactUser.language == "eng") {
+                                bot.sendMessage(msg.from.id, "Thank you for voting 😊", {
+                                    reply_markup: { remove_keyboard: true }
+                                })
+                            }
                         }
-                        catch (error) {
-                            console.log(error);
+                        else {
+                            console.log('Tastiqlanmadi');
+                            if (contactUser.language == "uzb") {
+                                bot.sendMessage(msg.chat.id, "Ovoz berish uchun iltimos kanalga azo bo'ling!", {
+                                    reply_markup: {
+                                        inline_keyboard: [
+                                            [
+                                                {
+                                                    text: "Kanal",
+                                                    url: `https://t.me/${channelId.slice(1)}`
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    text: "Obuna bo'ldim ✅",
+                                                    callback_data: "subscribe"
+                                                }
+                                            ]
+                                        ],
+                                    }
+                                })
+                            }
+
+                            else if (contactUser.language == "rus") {
+                                bot.sendMessage(msg.chat.id, "Подпишитесь на канал, чтобы проголосовать!", {
+                                    reply_markup: {
+                                        inline_keyboard: [
+                                            [
+                                                {
+                                                    text: "Канал",
+                                                    url: `https://t.me/${channelId.slice(1)}`
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    text: "Я подписался ✅",
+                                                    callback_data: "subscribe"
+                                                }
+                                            ]
+                                        ],
+                                    }
+                                })
+                            }
+
+                            else if (contactUser.language == "eng") {
+                                bot.sendMessage(msg.chat.id, "Subscribe to the channel to vote!", {
+                                    reply_markup: {
+                                        inline_keyboard: [
+                                            [
+                                                {
+                                                    text: "Channel",
+                                                    url: `https://t.me/${channelId.slice(1)}`
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    text: "I subscribed ✅",
+                                                    callback_data: "subscribe"
+                                                }
+                                            ]
+                                        ],
+                                    }
+                                })
+                            }
+
+                            try {
+                                if (contactUser) {
+                                    for (let i in users) {
+                                        if (users[i].id == msg.chat.id) {
+                                            users[i].phone_number = msg.contact.phone_number;
+                                        }
+                                    }
+                                    write_file('users', users);
+                                }
+                            }
+                            catch (error) {
+                                console.log(error);
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Произошла ошибка:', error));
+            }
+            else {
+                let ovoz = {
+                    ovoz_phone: phone
+                }
+                votes.push(ovoz)
+                write_file('ovoz', votes)
+
+                for (let i in saylanuvchi) {
+                    if (saylanuvchi[i].id == saylan) {
+                        if (saylanuvchi[i].ovoz) {
+                            saylanuvchi[i].ovoz = saylanuvchi[i].ovoz + 1;
+                        }
+                        else {
+                            saylanuvchi[i].ovoz = 1
+                        }
+
+                    }
+                }
+                write_file('saylanuvchi', saylanuvchi);
+
+                if (contactUser) {
+                    for (let i in users) {
+                        if (users[i].id == msg.chat.id) {
+                            users[i].phone_number = msg.contact.phone_number;
                         }
                     }
-                })
-                .catch(error => console.error('Произошла ошибка:', error));
+                    write_file('users', users);
+                }
+
+                if (contactUser.language == "uzb") {
+                    bot.sendMessage(msg.from.id, "Ovoz berganingiz uchun raxmat 😊", {
+                        reply_markup: { remove_keyboard: true }
+                    })
+                }
+
+                else if (contactUser.language == "rus") {
+                    bot.sendMessage(msg.from.id, "Спасибо за ваш голос 😊", {
+                        reply_markup: { remove_keyboard: true }
+                    })
+                }
+
+                else if (contactUser.language == "eng") {
+                    bot.sendMessage(msg.from.id, "Thank you for voting 😊", {
+                        reply_markup: { remove_keyboard: true }
+                    })
+                }
+
+            }
         }
         else {
             if (contactUser.language == "uzb") {
@@ -460,7 +510,7 @@ let superAdminMenu = [
             text: "Adminlar 👨🏻‍💻"
         },
         {
-            text: "Saylanuvchilar 🙋🏻‍♂️"
+            text: "Nomzodlar 🙋🏻‍♂️"
         }
     ],
     [
@@ -486,7 +536,7 @@ let adminMenu = [
             text: "Foydalanuvchilar 👥"
         },
         {
-            text: "Saylanuvchilar 🙋🏻‍♂️"
+            text: "Nomzodlar 🙋🏻‍♂️"
         }
     ],
     [
@@ -507,14 +557,16 @@ let adminMenu = [
 // ADMIN PANEL
 
 bot.on("text", msg => {
+    let owner = process.env.OWNER == msg.chat.id
     let SuperAdmin = process.env.SUPER_ADMIN == msg.chat.id
-    let superAdminFind = admin.find(s => s.super_admin == msg.chat.id)
     let adminFind = admin.find(s => s.id == msg.chat.id)
     let textAdd = msg.text.slice(0, 3)
     let textDel = msg.text.slice(0, 6)
     let textChange = msg.text.slice(0, 6)
+    let NomzodAdd = msg.text.slice(0, 9)
+    let NomzodDelete = msg.text.slice(0, 12)
 
-    if (msg.text == "Assalomu alaykum" && (superAdminFind || SuperAdmin)) {
+    if (msg.text == "Assalomu alaykum" && (owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Assalomu alaykum Boss 😎</b>", {
             parse_mode: 'HTML',
             reply_markup: {
@@ -534,14 +586,14 @@ bot.on("text", msg => {
         })
     }
 
-    else if (msg.text == "Menuni yopish 🔽" && (adminFind || superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Menuni yopish 🔽" && (adminFind || owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Xayir Boss 😎</b>", {
             parse_mode: 'HTML',
             reply_markup: { remove_keyboard: true }
         })
     }
 
-    else if (msg.text == "🔙 Orqaga" && (superAdminFind || SuperAdmin)) {
+    else if (msg.text == "🔙 Orqaga" && (owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Assosiy menu ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
@@ -563,7 +615,7 @@ bot.on("text", msg => {
 
     // Adminlar menusi start
 
-    else if (msg.text == "Adminlar 👨🏻‍💻" && (superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Adminlar 👨🏻‍💻" && (owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Adminlar menusi ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
@@ -599,13 +651,13 @@ bot.on("text", msg => {
         })
     }
 
-    else if (msg.text == "Adminlar soni 📊" && (superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Adminlar soni 📊" && (owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, `Hozirda <b>${admin.length}</b> ta Admin bor`, {
             parse_mode: 'HTML',
         })
     }
 
-    else if (msg.text == "Adminlar ro'yxati 📄" && (superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Adminlar ro'yxati 📄" && (owner || SuperAdmin)) {
         let adminRoyxat = []
         if (admin.length > 0) {
             for (i in admin) {
@@ -625,13 +677,13 @@ bot.on("text", msg => {
         }
     }
 
-    else if (msg.text == "Admin qo'shish 📥" && (superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Admin qo'shish 📥" && (owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Qo'shmoqchi bo'lgan Admin username sini kiriting..</b>\n\n<i>Misol uchun:</i> <b>Add--@eshmat</b>", {
             parse_mode: 'HTML',
         })
     }
 
-    else if (textAdd == "Add" && (superAdminFind || SuperAdmin)) {
+    else if (textAdd == "Add" && (owner || SuperAdmin)) {
         let name = msg.text.slice(6)
         let adminSearch = users.find(s => s.username == name)
         if (adminSearch) {
@@ -656,7 +708,7 @@ bot.on("text", msg => {
         }
     }
 
-    else if (msg.text == "Adminlar ro'yxati tozalash ♻️" && (superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Adminlar ro'yxati tozalash ♻️" && (owner || SuperAdmin)) {
         admin = []
         write_file('admin', admin)
         bot.sendMessage(msg.chat.id, "<b>Adminlar ro'yxati tozalandi!</b>", {
@@ -664,13 +716,13 @@ bot.on("text", msg => {
         })
     }
 
-    else if (msg.text == "Admin o'chirish 🗑" && (superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Admin o'chirish 🗑" && (owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>O'chirmoqchi bo'lgan Admin username sini kiriting..</b>\n\n<i>Misol uchun:</i> <b>Delete--@eshmat</b>", {
             parse_mode: 'HTML',
         })
     }
 
-    else if (textDel == "Delete" && (superAdminFind || SuperAdmin)) {
+    else if (textDel == "Delete" && (owner || SuperAdmin)) {
         let name = msg.text.slice(9)
         let adminSearch = admin.find(s => s.username !== name)
         let adminEmpty = admin.find(s => s.username == name)
@@ -703,7 +755,7 @@ bot.on("text", msg => {
 
     // Foydalanuvchilar menusi start
 
-    else if (msg.text == "Foydalanuvchilar 👥" && (adminFind || superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Foydalanuvchilar 👥" && (adminFind || owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Foydalanuvchilar menusi ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
@@ -727,13 +779,13 @@ bot.on("text", msg => {
         })
     }
 
-    else if (msg.text == "Foydalanuvchilar soni 📊" && (adminFind || superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Foydalanuvchilar soni 📊" && (adminFind || owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, `Hozirda <b>${users.length}</b> ta Foydalanuvchi bor`, {
             parse_mode: 'HTML',
         })
     }
 
-    else if (msg.text == "Foydalanuvchilar ro'yxati 📄" && (adminFind || superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Foydalanuvchilar ro'yxati 📄" && (adminFind || owner || SuperAdmin)) {
         let usersRoyxat = []
         if (users.length > 0) {
             for (i in users) {
@@ -758,35 +810,35 @@ bot.on("text", msg => {
 
     // Saylanuvchilar menusi start
 
-    else if (msg.text == "Saylanuvchilar 🙋🏻‍♂️" && (adminFind || superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Nomzodlar 🙋🏻‍♂️" && (adminFind || owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Saylanuvchilar menusi ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
                 keyboard: [
                     [
                         {
-                            text: "Saylanuvchilar soni 📊"
+                            text: "Nomzodlar soni 📊"
                         },
                         {
-                            text: "Saylanuvchilar ro'yxati 📄"
+                            text: "Nomzodlar ro'yxati 📄"
                         }
                     ],
                     [
                         {
-                            text: "Saylanuvchilar statistikasi 📊"
+                            text: "Nomzodlar statistikasi 📊"
                         }
                     ],
                     [
                         {
-                            text: "Saylanuvchi qo'shish 📥"
+                            text: "Nomzod qo'shish 📥"
                         },
                         {
-                            text: "Saylanuvchi o'chirish 🗑"
+                            text: "Nomzod o'chirish 🗑"
                         }
                     ],
                     [
                         {
-                            text: "Saylanuvchilar ro'yxatini tozalash ♻️"
+                            text: "Nomzodlar ro'yxatini tozalash ♻️"
                         }
                     ],
                     [
@@ -803,12 +855,147 @@ bot.on("text", msg => {
         })
     }
 
+    else if (msg.text == "Nomzodlar soni 📊" && (adminFind || owner || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, `Hozirda <b>${saylanuvchi.length}</b> ta Nomzod bor bor`, {
+            parse_mode: 'HTML',
+        })
+    }
+
+    else if (msg.text == "Nomzodlar ro'yxati 📄" && (adminFind || owner || SuperAdmin)) {
+        let saylanuvchiRoyxat = []
+        if (saylanuvchi.length > 0) {
+            for (i in saylanuvchi) {
+                let saylanuvchiRoyxatChild = `<b>Ism-Familya:</b> ${saylanuvchi[i].full_name}\n\n`
+                saylanuvchiRoyxat.push(saylanuvchiRoyxatChild)
+            }
+            saylanuvchiRoyxat = String(saylanuvchiRoyxat).replace(/,/g, "")
+            bot.sendMessage(msg.chat.id, `${saylanuvchiRoyxat}`, {
+                parse_mode: 'HTML',
+            })
+        }
+        else {
+            bot.sendMessage(msg.chat.id, "<b>Nomzodlar ro'yxati bo'sh!</b>", {
+                parse_mode: 'HTML'
+            })
+        }
+    }
+
+    else if (msg.text == "Nomzodlar statistikasi 📊" && (adminFind || owner || SuperAdmin)) {
+        let saylanuvchiRoyxat = []
+        if (saylanuvchi.length > 0) {
+            saylanuvchi.sort((a, b) => {
+                if (a.ovoz === undefined && b.ovoz === undefined) {
+                    return 0;
+                }
+                if (a.ovoz === undefined) {
+                    return 1;
+                }
+                if (b.ovoz === undefined) {
+                    return -1;
+                }
+                return b.ovoz - a.ovoz;
+            });
+            for (i in saylanuvchi) {
+                let saylanuvchiRoyxatChild = `<b>Ism-Familya:</b> ${saylanuvchi[i].full_name}\n<b>To'plangan ovoz:</b> ${saylanuvchi[i].ovoz}\n\n`
+                saylanuvchiRoyxat.push(saylanuvchiRoyxatChild)
+            }
+            saylanuvchiRoyxat = String(saylanuvchiRoyxat).replace(/,/g, "")
+            bot.sendMessage(msg.chat.id, `${saylanuvchiRoyxat}`, {
+                parse_mode: 'HTML',
+            })
+        }
+        else {
+            bot.sendMessage(msg.chat.id, "<b>Nomzodlar ro'yxati bo'sh!</b>", {
+                parse_mode: 'HTML'
+            })
+        }
+    }
+
+    else if (msg.text == "Nomzod qo'shish 📥" && (adminFind || owner || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "<b>Qo'shmoqchi bo'lgan Nomzodning to'liq isim-familya sini kiriting..</b>\n\n<i>Misol uchun:</i> <b>NomzodAdd--Eshmat Eshmatov</b>", {
+            parse_mode: 'HTML',
+        })
+    }
+
+    else if (NomzodAdd == "NomzodAdd" && (adminFind || owner || SuperAdmin)) {
+        let name = msg.text.slice(11)
+        let saylanuvchiWrite = saylanuvchi.find(s => s.full_name == name)
+        if (!saylanuvchiWrite) {
+            saylanuvchi.push({
+                id: saylanuvchi.length + 1,
+                full_name: name
+            })
+            write_file('saylanuvchi', saylanuvchi)
+            bot.sendMessage(msg.chat.id, `<b>Nomzod qo'shildi..!</b>\n\nQo'shilgan nomzod ma'lumotlari\n\n<b>Ism-Familyasi:</b> ${name}`, {
+                parse_mode: 'HTML',
+            })
+        }
+        else {
+            bot.sendMessage(msg.chat.id, `<b>Nomzod qo'shilmadi...</b>\n\nBu foydalanuvchi oldin Nomzodlar ro'yxatiga qo'shilgan`, {
+                parse_mode: 'HTML',
+            })
+        }
+    }
+
+    else if (msg.text == "Nomzod o'chirish 🗑" && (adminFind || owner || SuperAdmin)) {
+        bot.sendMessage(msg.chat.id, "<b>O'chirmoqchi bo'lgan Nomzod to'liq ism-familya sini kiriting..</b>\n\n<i>Misol uchun:</i> <b>NomzodDelete--Eshmat Eshmatov</b>", {
+            parse_mode: 'HTML',
+        })
+    }
+
+    else if (NomzodDelete == "NomzodDelete" && (adminFind || owner || SuperAdmin)) {
+        let name = msg.text.slice(14)
+        let saylanuvchiSearch = saylanuvchi.find(s => s.full_name !== name)
+        let saylanuvchiEmpty = saylanuvchi.find(s => s.full_name == name)
+        if (saylanuvchiEmpty) {
+            if (saylanuvchiSearch) {
+                saylanuvchi = []
+                saylanuvchi.push(saylanuvchiSearch)
+                write_file('saylanuvchi', saylanuvchi)
+                bot.sendMessage(msg.chat.id, `<b>Nomzod o'chirildi..!</b>\n\nO'chirilgan nomzod ma'lumotlari\n\n<b>Ism-Familya:</b> ${saylanuvchiEmpty.full_name}`, {
+                    parse_mode: 'HTML'
+                })
+            }
+            else {
+                saylanuvchi = []
+                write_file('saylanuvchi', saylanuvchi)
+                bot.sendMessage(msg.chat.id, `<b>Nomzod o'chirildi..!</b>\n\nO'chirilgan nomzod ma'lumotlari\n\n<b>Ism-Familya:</b> ${saylanuvchiEmpty.full_name}`, {
+                    parse_mode: 'HTML'
+                })
+            }
+        }
+        else {
+            bot.sendMessage(msg.chat.id, "<b>Nomzod topilmadi..</b>\n\nBunday ism-familyadagi nomzod Nomzodlar ro'yxatida yo'q", {
+                parse_mode: 'HTML'
+            })
+        }
+    }
+
+    else if (msg.text == "Nomzodlar ro'yxatini tozalash ♻️" && (adminFind || owner || SuperAdmin)) {
+        saylanuvchi = []
+        write_file('saylanuvchi', saylanuvchi)
+        bot.sendMessage(msg.chat.id, "<b>Nomzodlar ro'yxati tozalandi!</b>", {
+            parse_mode: 'HTML'
+        })
+    }
+
+    else if (msg.text == "Ovozlarni tozalash ♻️" && (adminFind || owner || SuperAdmin)) {
+        ovoz = []
+        write_file('ovoz', ovoz)
+        bot.sendMessage(msg.chat.id, "<b>Ovozlar ro'yxati tozalandi!</b>", {
+            parse_mode: 'HTML'
+        })
+    }
+
+
+
+
     // Saylanuvchilar menusi end
 
 
     // Majburiy obuna menusi start
 
-    else if (msg.text == "Majburiy obuna ✅" && (adminFind || superAdminFind || SuperAdmin)) {
+    else if (msg.text == "Majburiy obuna ✅" && (adminFind || owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Majburiy obuna menusi ochildi!</b>", {
             parse_mode: 'HTML',
             reply_markup: {
@@ -827,18 +1014,15 @@ bot.on("text", msg => {
         })
     }
 
-    else if (msg.text == "Kanalni alamashtirish 🔄" && (adminFind || superAdminFind || SuperAdmin)){
+    else if (msg.text == "Kanalni alamashtirish 🔄" && (adminFind || owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Almashtirmoqchi bo'lgan Kanal username sini kiriting..</b>\n\n<i>Misol uchun:</i> <b>Change--@kunuz</b>", {
             parse_mode: 'HTML',
         })
     }
 
-    else if (textChange == "Change" && (adminFind || superAdminFind || SuperAdmin)){
-        changeChanel = [{
-           id: msg.text.slice(8)
-        }]
-        write_file('chanell', changeChanel)
-        bot.sendMessage(msg.chat.id, "<b>Kanal almashtirildi..!</b>",{
+    else if (textChange == "Change" && (adminFind || owner || SuperAdmin)) {
+        channelId = msg.text.slice(8)
+        bot.sendMessage(msg.chat.id, "<b>Kanal almashtirildi..!</b>", {
             parse_mode: 'HTML'
         })
     }

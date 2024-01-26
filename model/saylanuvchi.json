@@ -1,31 +1,6 @@
 [
     {
-        "id": 1,
-        "name": "Eshmat Eshmatov",
-        "ovoz": 7
-    },
-    {
         "id": 2,
-        "name": "Toshmat Toshmatov"
-    },
-    {
-        "id": 3,
-        "name": "John Doe",
-        "ovoz": 1
-    },
-    {
-        "id": 4,
-        "name": "Ahmediv Avaz",
-        "ovoz": 5
-    },
-    {
-        "id": 5,
-        "name": "Kimsan Kimsanov",
-        "ovoz": 1
-    },
-    {
-        "id": 6,
-        "name": "O'tirdiyev Turdi",
-        "ovoz": 1
+        "full_name": "John Doe"
     }
 ]
