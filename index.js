@@ -580,7 +580,7 @@ let superAdminMenu = [
 
 // ADMIN MENU
 
-let adminMenu = [
+let adminMenu = [  
     [
         {
             text: "Foydalanuvchilar 👥"
@@ -1076,4 +1076,13 @@ bot.on("text", msg => {
 
     // Majburiy obuna menusi end
 
+
+    // Reklama joylash menusi start
+
+    else if (msg.text == "Reklama joylash 📱" && (adminFind || owner || SuperAdmin)){
+
+    }
+
+
+    // Reklama jolash menusi end
 })
