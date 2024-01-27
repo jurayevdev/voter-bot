@@ -19,6 +19,7 @@ bot.onText(/start/, msg => {
     let foundedUser = users.find(s => s.id == msg.from.id);
     if (foundedUser) {
         if (saylanuvchi.length > 0) {
+            let generatedInlineKeyboard = generateInlineKeyboard(saylanuvchi);
             if (foundedUser.language == "uzb") {
                 bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz 😀</b>", {
                     parse_mode: 'HTML',
@@ -26,7 +27,7 @@ bot.onText(/start/, msg => {
                 bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nNomzodlar ro'yhati 👇🏻</b>", {
                     parse_mode: 'HTML',
                     reply_markup: {
-                        inline_keyboard: inlineKeyboard
+                        inline_keyboard: generatedInlineKeyboard
                     }
                 })
             }
@@ -38,7 +39,7 @@ bot.onText(/start/, msg => {
                 bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок кандидаты 👇🏻</b>", {
                     parse_mode: 'HTML',
                     reply_markup: {
-                        inline_keyboard: inlineKeyboard
+                        inline_keyboard: generatedInlineKeyboard
                     }
                 })
             }
@@ -50,7 +51,7 @@ bot.onText(/start/, msg => {
                 bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of candidates 👇🏻</b>", {
                     parse_mode: 'HTML',
                     reply_markup: {
-                        inline_keyboard: inlineKeyboard
+                        inline_keyboard: generatedInlineKeyboard
                     }
                 })
             }
@@ -106,13 +107,14 @@ bot.onText(/start/, msg => {
         let nomzodSearch = saylanuvchi.find(s => s.id == Number(msg.data));
         
         if (saylanuvchi.length > 0 && (msg.data == "uzb" || msg.data == "rus" || msg.data == "eng")) {
+            let generatedInlineKeyboard = generateInlineKeyboard(saylanuvchi);
             if (msg.data == 'uzb') {
                 langu = "uzb"
                 bot.deleteMessage(msg.message.chat.id, msg.message.message_id);
                 bot.sendMessage(msg.message.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nNomzodlar ro'yhati 👇🏻</b>", {
                     parse_mode: 'HTML',
                     reply_markup: {
-                        inline_keyboard: inlineKeyboard
+                        inline_keyboard: generatedInlineKeyboard
                     }
                 })
             }
@@ -123,7 +125,7 @@ bot.onText(/start/, msg => {
                 bot.sendMessage(msg.message.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок кандидаты 👇🏻</b>", {
                     parse_mode: 'HTML',
                     reply_markup: {
-                        inline_keyboard: inlineKeyboard
+                        inline_keyboard: generatedInlineKeyboard
                     }
                 })
             }
@@ -134,7 +136,7 @@ bot.onText(/start/, msg => {
                 bot.sendMessage(msg.message.chat.id, "<b>Who do you want to vote for?\n\nList of candidates 👇🏻</b>", {
                     parse_mode: 'HTML',
                     reply_markup: {
-                        inline_keyboard: inlineKeyboard
+                        inline_keyboard: generatedInlineKeyboard
                     }
                 })
             }
@@ -534,17 +536,23 @@ async function checkSubscription(userId) {
     }
 }
 
+// List button nomzodlar
 
-for (i in saylanuvchi) {
-    let row = [
-        {
-            text: saylanuvchi[i].full_name,
-            callback_data: saylanuvchi[i].id
-        }
-    ];
+function generateInlineKeyboard(array) {
+    let inlineKeyboard = [];
 
-    inlineKeyboard.push(row);
+    for (let i = 0; i < array.length; i++) {
+        let row = [
+            {
+                text: array[i].full_name,
+                callback_data: array[i].id
+            }
+        ];
 
+        inlineKeyboard.push(row);
+    }
+
+    return inlineKeyboard;
 }
 
 // SUPER ADMIN MENU
@@ -568,11 +576,6 @@ let superAdminMenu = [
             text: "Majburiy obuna ✅"
         },
         {
-            text: "Reklama joylash 📱"
-        }
-    ],
-    [
-        {
             text: "Menuni yopish 🔽"
         }
     ]
@@ -593,11 +596,6 @@ let adminMenu = [
         {
             text: "Majburiy obuna ✅"
         },
-        {
-            text: "Reklama joylash 📱"
-        }
-    ],
-    [
         {
             text: "Menuni yopish 🔽"
         }
