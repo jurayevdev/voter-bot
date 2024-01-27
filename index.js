@@ -6,16 +6,20 @@ const bot = new TelegramBot(process.env.BOT_API_KEY, { polling: true })
 
 // let changeChanel = read_file('chanell')
 let channelId = '';
-let users = read_file('users');
-let saylanuvchi = read_file('saylanuvchi');
-let votes = read_file('ovoz');
-let admin = read_file('admin')
+// let users = read_file('users');
+// let saylanuvchi = read_file('saylanuvchi');
+// let votes = read_file('ovoz');
+// let admin = read_file('admin')
 let phone = ""
 let saylan = 0
 let inlineKeyboard = [];
 
 
 bot.onText(/start/, msg => {
+    let users = read_file('users');
+    let saylanuvchi = read_file('saylanuvchi');
+    let votes = read_file('ovoz');
+    let admin = read_file('admin')
     let foundedUser = users.find(s => s.id == msg.from.id);
     if (foundedUser) {
         if (saylanuvchi.length > 0) {
@@ -102,10 +106,14 @@ bot.onText(/start/, msg => {
     }
 
     bot.on("callback_query", msg => {
+        let users = read_file('users');
+        let saylanuvchi = read_file('saylanuvchi');
+        let votes = read_file('ovoz');
+        let admin = read_file('admin')
         let langu = "eng";
         let writeUser = users.find(s => s.id == msg.from.id);
         let nomzodSearch = saylanuvchi.find(s => s.id == Number(msg.data));
-        
+
         if (saylanuvchi.length > 0 && (msg.data == "uzb" || msg.data == "rus" || msg.data == "eng")) {
             let generatedInlineKeyboard = generateInlineKeyboard(saylanuvchi);
             if (msg.data == 'uzb') {
@@ -141,7 +149,7 @@ bot.onText(/start/, msg => {
                 })
             }
         }
-        
+
         else if (saylanuvchi.length <= 0) {
             if (msg.data == 'uzb') {
                 langu = "uzb"
@@ -293,6 +301,10 @@ bot.onText(/start/, msg => {
 
 
 bot.on("contact", (msg) => {
+    let users = read_file('users');
+    let saylanuvchi = read_file('saylanuvchi');
+    let votes = read_file('ovoz');
+    let admin = read_file('admin')
     let contactUser = users.find(s => s.id == msg.from.id);
     let ovozUser = votes.find(s => s.ovoz_phone == msg.contact.phone_number)
     phone = msg.contact.phone_number
@@ -583,7 +595,7 @@ let superAdminMenu = [
 
 // ADMIN MENU
 
-let adminMenu = [  
+let adminMenu = [
     [
         {
             text: "Foydalanuvchilar 👥"
@@ -605,6 +617,10 @@ let adminMenu = [
 // ADMIN PANEL
 
 bot.on("text", msg => {
+    let users = read_file('users');
+    let saylanuvchi = read_file('saylanuvchi');
+    let votes = read_file('ovoz');
+    let admin = read_file('admin')
     let owner = process.env.OWNER == msg.chat.id
     let SuperAdmin = process.env.SUPER_ADMIN == msg.chat.id
     let adminFind = admin.find(s => s.id == msg.chat.id)
@@ -1077,7 +1093,7 @@ bot.on("text", msg => {
 
     // Reklama joylash menusi start
 
-    else if (msg.text == "Reklama joylash 📱" && (adminFind || owner || SuperAdmin)){
+    else if (msg.text == "Reklama joylash 📱" && (adminFind || owner || SuperAdmin)) {
 
     }
 

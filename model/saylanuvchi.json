@@ -2,27 +2,14 @@
     {
         "id": 1,
         "full_name": "Eshmat Eshmatov",
-        "ovoz": 3
-    },
-    {
-        "id": 2,
-        "full_name": "Toshmat Toshmatov"
-    },
-    {
-        "id": 3,
-        "full_name": "John Doe",
         "ovoz": 1
     },
     {
-        "id": 4,
-        "full_name": "Men uchun"
+        "id": 2,
+        "full_name": "John Doe"
     },
     {
-        "id": 5,
-        "full_name": "Davlat Jo'rayev"
-    },
-    {
-        "id": 6,
-        "full_name": "Dasturchi Programer"
+        "id": 3,
+        "full_name": "Kimsan Kimsanov"
     }
 ]
