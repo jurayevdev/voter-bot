@@ -1,6 +1,7 @@
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const { read_file, write_file } = require('./fs/fs');
+const keep_alive = require('./keep_alive.js');
 
 const bot = new TelegramBot(process.env.BOT_API_KEY, { polling: true })
 
