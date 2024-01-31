@@ -4,22 +4,14 @@ const { read_file, write_file } = require('./fs/fs');
 
 const bot = new TelegramBot(process.env.BOT_API_KEY, { polling: true })
 
-// let changeChanel = read_file('chanell')
-let channelId = '';
-// let users = read_file('users');
-// let saylanuvchi = read_file('saylanuvchi');
-// let votes = read_file('ovoz');
-// let admin = read_file('admin')
+let channelId = '@jurayevdev';
 let phone = ""
 let saylan = 0
-let inlineKeyboard = [];
 
 
 bot.onText(/start/, msg => {
     let users = read_file('users');
     let saylanuvchi = read_file('saylanuvchi');
-    let votes = read_file('ovoz');
-    let admin = read_file('admin')
     let foundedUser = users.find(s => s.id == msg.from.id);
     if (foundedUser) {
         if (saylanuvchi.length > 0) {
@@ -28,36 +20,42 @@ bot.onText(/start/, msg => {
                 bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz 😀</b>", {
                     parse_mode: 'HTML',
                 })
-                bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nNomzodlar ro'yhati 👇🏻</b>", {
-                    parse_mode: 'HTML',
-                    reply_markup: {
-                        inline_keyboard: generatedInlineKeyboard
-                    }
-                })
+                setTimeout(() => {
+                    bot.sendMessage(msg.chat.id, "<b>Kimga ovoz bermoqchisiz?\n\nNomzodlar ro'yhati 👇🏻</b>", {
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: generatedInlineKeyboard
+                        }
+                    })
+                }, 1000)
             }
 
             else if (foundedUser.language == "rus") {
                 bot.sendMessage(msg.chat.id, "<b>Еще раз привет и добро пожаловать в наш бот 😀</b>", {
                     parse_mode: 'HTML',
                 })
-                bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок кандидаты 👇🏻</b>", {
-                    parse_mode: 'HTML',
-                    reply_markup: {
-                        inline_keyboard: generatedInlineKeyboard
-                    }
-                })
+                setTimeout(() => {
+                    bot.sendMessage(msg.chat.id, "<b>За кого вы хотите проголосовать?\n\nСписок кандидаты 👇🏻</b>", {
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: generatedInlineKeyboard
+                        }
+                    })
+                }, 1000)
             }
 
             else if (foundedUser.language == "eng") {
                 bot.sendMessage(msg.chat.id, "<b>Hello again and welcome to our bot 😀</b>", {
                     parse_mode: 'HTML',
                 })
-                bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of candidates 👇🏻</b>", {
-                    parse_mode: 'HTML',
-                    reply_markup: {
-                        inline_keyboard: generatedInlineKeyboard
-                    }
-                })
+                setTimeout(() => {
+                    bot.sendMessage(msg.chat.id, "<b>Who do you want to vote for?\n\nList of candidates 👇🏻</b>", {
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: generatedInlineKeyboard
+                        }
+                    })
+                }, 1000)
             }
         }
         else {
@@ -82,7 +80,7 @@ bot.onText(/start/, msg => {
     }
 
     else {
-        bot.sendMessage(msg.chat.id, "<b>Hello and welcome to our bot 😀</b>\n\n<i>Select the language..👇🏻</i>", {
+        bot.sendMessage(msg.chat.id, "<b>Salom va bizning botimizga xush kelibsiz 😀</b>\n\n<i>Tilni tanlang..👇🏻</i>", {
             parse_mode: 'HTML',
             reply_markup: {
                 inline_keyboard: [
@@ -104,16 +102,14 @@ bot.onText(/start/, msg => {
             }
         })
     }
-
+    
     bot.on("callback_query", msg => {
         let users = read_file('users');
         let saylanuvchi = read_file('saylanuvchi');
         let votes = read_file('ovoz');
-        let admin = read_file('admin')
         let langu = "eng";
         let writeUser = users.find(s => s.id == msg.from.id);
         let nomzodSearch = saylanuvchi.find(s => s.id == Number(msg.data));
-
         if (saylanuvchi.length > 0 && (msg.data == "uzb" || msg.data == "rus" || msg.data == "eng")) {
             let generatedInlineKeyboard = generateInlineKeyboard(saylanuvchi);
             if (msg.data == 'uzb') {
@@ -294,7 +290,7 @@ bot.onText(/start/, msg => {
             }
         }
         catch { err } {
-            console.error(err)
+            console.error("Error callback da bor..!", err)
         }
     })
 })
@@ -304,7 +300,6 @@ bot.on("contact", (msg) => {
     let users = read_file('users');
     let saylanuvchi = read_file('saylanuvchi');
     let votes = read_file('ovoz');
-    let admin = read_file('admin')
     let contactUser = users.find(s => s.id == msg.from.id);
     let ovozUser = votes.find(s => s.ovoz_phone == msg.contact.phone_number)
     phone = msg.contact.phone_number
@@ -437,7 +432,7 @@ bot.on("contact", (msg) => {
                                 }
                             }
                             catch (error) {
-                                console.log(error);
+                                console.log("Error contact da bor..!", error);
                             }
                         }
                     })
@@ -619,7 +614,6 @@ let adminMenu = [
 bot.on("text", msg => {
     let users = read_file('users');
     let saylanuvchi = read_file('saylanuvchi');
-    let votes = read_file('ovoz');
     let admin = read_file('admin')
     let owner = process.env.OWNER == msg.chat.id
     let SuperAdmin = process.env.SUPER_ADMIN == msg.chat.id
@@ -629,7 +623,7 @@ bot.on("text", msg => {
     let textChange = msg.text.slice(0, 6)
     let NomzodAdd = msg.text.slice(0, 9)
     let NomzodDelete = msg.text.slice(0, 12)
-
+   
     if (msg.text == "Assalomu alaykum" && (owner || SuperAdmin)) {
         bot.sendMessage(msg.chat.id, "<b>Assalomu alaykum Boss 😎</b>", {
             parse_mode: 'HTML',
