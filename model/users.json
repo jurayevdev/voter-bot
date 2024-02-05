@@ -1,3 +1,23 @@
 [
-  
+    {
+        "id": 1393769946,
+        "first_name": "Кадиров мурод",
+        "username": "murod2x",
+        "language": "uzb",
+        "phone_number": "998911003205"
+    },
+    {
+        "id": 2012098674,
+        "first_name": "Davlat",
+        "username": "jurayevlive",
+        "language": "uzb",
+        "phone_number": "+998910030951"
+    },
+    {
+        "id": 6821461295,
+        "first_name": "🇺🇿",
+        "username": "ikromov03",
+        "language": "uzb",
+        "phone_number": "998330237376"
+    }
 ]

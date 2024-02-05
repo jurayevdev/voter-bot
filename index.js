@@ -1,4 +1,5 @@
 require('dotenv').config();
+const fetch = require("node-fetch");
 const TelegramBot = require('node-telegram-bot-api');
 const { read_file, write_file } = require('./fs/fs');
 
@@ -18,7 +19,7 @@ bot.onText(/start/, msg => {
         if (saylanuvchi.length > 0) {
             let generatedInlineKeyboard = generateInlineKeyboard(saylanuvchi);
             if (foundedUser.language == "uzb") {
-                bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz 😀</b>", {
+                bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz</b>", {
                     parse_mode: 'HTML',
                 })
                 setTimeout(() => {
@@ -28,11 +29,11 @@ bot.onText(/start/, msg => {
                             inline_keyboard: generatedInlineKeyboard
                         }
                     })
-                }, 1000)
+                }, 500)
             }
 
             else if (foundedUser.language == "rus") {
-                bot.sendMessage(msg.chat.id, "<b>Еще раз привет и добро пожаловать в наш бот 😀</b>", {
+                bot.sendMessage(msg.chat.id, "<b>Еще раз привет и добро пожаловать в наш бот</b>", {
                     parse_mode: 'HTML',
                 })
                 setTimeout(() => {
@@ -42,11 +43,11 @@ bot.onText(/start/, msg => {
                             inline_keyboard: generatedInlineKeyboard
                         }
                     })
-                }, 1000)
+                }, 500)
             }
 
             else if (foundedUser.language == "eng") {
-                bot.sendMessage(msg.chat.id, "<b>Hello again and welcome to our bot 😀</b>", {
+                bot.sendMessage(msg.chat.id, "<b>Hello again and welcome to our bot</b>", {
                     parse_mode: 'HTML',
                 })
                 setTimeout(() => {
@@ -56,24 +57,24 @@ bot.onText(/start/, msg => {
                             inline_keyboard: generatedInlineKeyboard
                         }
                     })
-                }, 1000)
+                }, 500)
             }
         }
         else {
             if (foundedUser.language == "uzb") {
-                bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz 😀</b>\n<b>Hozirda Nomzodlar yo'q!</b>\n\n<i>Tashrifingiz uchun raxmat!</i>", {
+                bot.sendMessage(msg.chat.id, "<b>Yana bir bor salom va bizning botimizga xush kelibsiz</b>\n<b>Hozirda Nomzodlar yo'q!</b>\n\n<i>Tashrifingiz uchun raxmat!</i>", {
                     parse_mode: 'HTML',
                 })
             }
 
             else if (foundedUser.language == "rus") {
-                bot.sendMessage(msg.chat.id, "<b>Еще раз привет и добро пожаловать в наш бот 😀</b>\n<b>На данный момент кандидатов нет!</b>\n\n<i>Спасибо Вам за Ваш визит!</i>", {
+                bot.sendMessage(msg.chat.id, "<b>Еще раз привет и добро пожаловать в наш бот</b>\n<b>На данный момент кандидатов нет!</b>\n\n<i>Спасибо Вам за Ваш визит!</i>", {
                     parse_mode: 'HTML',
                 })
             }
 
             else if (foundedUser.language == "eng") {
-                bot.sendMessage(msg.chat.id, "<b>Hello again and welcome to our bot 😀</b>\n<b>No candidates yet!</b>\n\n<i>Thank you for your visit!</i>", {
+                bot.sendMessage(msg.chat.id, "<b>Hello again and welcome to our bot</b>\n<b>No candidates yet!</b>\n\n<i>Thank you for your visit!</i>", {
                     parse_mode: 'HTML',
                 })
             }
@@ -299,10 +300,12 @@ bot.onText(/start/, msg => {
 
 bot.on("contact", (msg) => {
     let users = read_file('users');
+    let admin = read_file('admin');
     let saylanuvchi = read_file('saylanuvchi');
     let votes = read_file('ovoz');
     let contactUser = users.find(s => s.id == msg.from.id);
     let ovozUser = votes.find(s => s.ovoz_phone == msg.contact.phone_number)
+    let adminSearch = admin.find(s => s.id == msg.chat.id)
     phone = msg.contact.phone_number
     if (msg.chat.id == msg.contact.user_id) {
         if (!ovozUser) {
@@ -435,7 +438,7 @@ bot.on("contact", (msg) => {
                             catch (error) {
                                 console.log("Error contact da bor..!", error);
                             }
-                        }
+                        } 
                     })
                     .catch(error => console.error('Произошла ошибка:', error));
             }
@@ -533,7 +536,7 @@ async function checkSubscription(userId) {
         const response = await fetch(url);
         const data = await response.json();
 
-        if (data.ok && (data.result.status === 'member' || data.result.status === 'administrator')) {
+        if (data.ok && (data.result.status === 'member' || data.result.status === 'admin' || data.result.status === 'owner')) {
             return true; // пользователь подписан на канал
         } else {
             return false; // пользователь не подписан на канал
